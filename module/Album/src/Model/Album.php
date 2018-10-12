@@ -41,13 +41,14 @@ class Album implements InputFilterAwareInterface
 		
 		$inputFilter = new inputFilter();
 		
-		$inputFilter->add([
+		// karena primary key maka tidak perlu di tambahkan
+		/*$inputFilter->add([
 			'name' => 'id',
 			'required' => true,
 			'filter' => [
 				['name' => ToInt::class],
 			],
-		]);
+		]);*/
 		
 		$inputFilter->add([
 			'name' => 'artist',
@@ -89,5 +90,14 @@ class Album implements InputFilterAwareInterface
 		
 		$this->inputFilter = $inputFilter;
 		return $this->inputFilter;
+	}
+	
+	public function getArrayCopy()
+	{
+		return [
+			'id' => $this->id,
+			'artist' => $this->artist,
+			'title' => $this->title,
+		];
 	}
 }
