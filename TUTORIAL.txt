@@ -1,1 +1,5 @@
-composer update
+[2018-10-11 00:00:00] composer update
+[2018-10-12 14:56:00] composer require --dev zendframework/zend-test
+[2018-10-12 15:00:00] cmd "vendor/bin/phpunit"
+[2018-10-12 15:03:00] cmd composer dump-autoload
+[2018-10-12 15:07:00] cmd "vendor/bin/phpunit" --testsuite Album

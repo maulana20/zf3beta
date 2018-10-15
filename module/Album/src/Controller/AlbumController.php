@@ -40,7 +40,7 @@ class AlbumController extends AbstractActionController
         $form->setData($request->getPost());
 
         if (! $form->isValid()) {
-			echo json_encode($form->getMessages());
+			//echo json_encode($form->getMessages());
             return ['form' => $form];
         }
         
