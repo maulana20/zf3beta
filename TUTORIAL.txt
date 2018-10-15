@@ -3,3 +3,6 @@
 [2018-10-12 15:00:00] cmd "vendor/bin/phpunit"
 [2018-10-12 15:03:00] cmd composer dump-autoload
 [2018-10-12 15:07:00] cmd "vendor/bin/phpunit" --testsuite Album
+[2018-10-15 15:43:00] composer require zendframework/zend-navigation
+[2018-10-15 15:43:00] composer dump-autoload
+[2018-10-15 17:18:00] composer development-enable

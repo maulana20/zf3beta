@@ -10,6 +10,7 @@ namespace Application;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
+use Zend\Navigation;
 
 return [
     'router' => [
@@ -57,4 +58,33 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+	'navigation' => [
+		'default' => [
+			[
+				'label' => 'Home',
+				'route' => 'home',
+			],
+			[
+				'label' => 'Album',
+				'route' => 'album',
+				'pages' => [
+					[
+						'label' => 'Add',
+						'route' => 'album',
+						'action' => 'add',
+					],
+					[
+						'label' => 'Edit',
+						'route' => 'album',
+						'action' => 'edit',
+					],
+					[
+						'label' => 'Delete',
+						'route' => 'album',
+						'action' => 'delete',
+					],
+				],
+			],
+		],
+	],
 ];
