@@ -9,7 +9,7 @@ namespace Application;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
-use Zend\ServiceManager\Factory\InvokableFactory;
+//use Zend\ServiceManager\Factory\InvokableFactory; 'jangan digunakan dahulu'
 use Zend\Navigation;
 
 return [
@@ -18,7 +18,7 @@ return [
             'home' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/',
+                    'route'    => '/test',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'     => 'index',
@@ -35,13 +35,28 @@ return [
                     ],
                 ],
             ],
+            'album' => [
+                'type'    => Segment::class,
+                'options' => [
+ 					'route' => '/album[/:action[/:id]]',
+					'constraints' => [
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+						'id'     => '[0-9]+',
+					],
+					'defaults' => [
+						'controller' => Controller\AlbumController::class,
+						'action'     => 'index',
+					],
+                ],
+            ],
         ],
     ],
-    'controllers' => [
+    /*'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
+            Controller\AlbumController::class => InvokableFactory::class
         ],
-    ],
+    ],*/
     'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
@@ -64,7 +79,7 @@ return [
 				'label' => 'Home',
 				'route' => 'home',
 			],
-			[
+			/*[
 				'label' => 'Album',
 				'route' => 'album',
 				'pages' => [
@@ -84,11 +99,7 @@ return [
 						'action' => 'delete',
 					],
 				],
-			],
-			[
-				'label' => 'Blog',
-				'route' => 'blog',
-			],
+			],*/
 		],
 	],
 ];
