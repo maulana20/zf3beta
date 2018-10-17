@@ -7,12 +7,10 @@
 
 namespace Application\Controller;
 
-use Zend\View\Model\ViewModel;
-
 class IndexController extends ParentController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        return $this->view;
     }
 }
