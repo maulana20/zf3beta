@@ -79,7 +79,7 @@ return [
 				'label' => 'Home',
 				'route' => 'home',
 			],
-			/*[
+			[
 				'label' => 'Album',
 				'route' => 'album',
 				'pages' => [
@@ -99,7 +99,7 @@ return [
 						'action' => 'delete',
 					],
 				],
-			],*/
+			],
 		],
 	],
 ];
