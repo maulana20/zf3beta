@@ -82,17 +82,36 @@ class Module implements ConfigProviderInterface
 							],
 						],
 					],
+					'blog' => [
+						'type'    => Segment::class,
+						'options' => [
+							'route' => '/blog[/:action[/:id]]',
+							'constraints' => [
+								'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+								'id'     => '[0-9]+',
+							],
+							'defaults' => [
+								'controller' => Controller\ListController::class,
+								'action'     => 'index',
+							],
+						],
+					],
 				],
 			],
 			'controllers' => [
 				'factories' => [
 					Controller\IndexController::class => InvokableFactory::class,
-					Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class
+					Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class,
+					Controller\ListController::class => Controller\Factory\ListControllerFactory::class
 				],
 			],
 			'service_manager' => [
+				'aliases' => [
+					Model\PostRepositoryInterface::class => Model\PostRepository::class
+				],
 				'factories' => [
-					Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class
+					Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class,
+					Model\PostRepository::class => InvokableFactory::class
 				],
 			],
 			'view_manager' => [
@@ -137,6 +156,10 @@ class Module implements ConfigProviderInterface
 								'action' => 'delete',
 							],
 						],
+					],
+					[
+						'label' => 'Blog',
+						'route' => 'blog',
 					],
 				],
 			],
