@@ -86,7 +86,13 @@ class Module implements ConfigProviderInterface
 			],
 			'controllers' => [
 				'factories' => [
-					Controller\IndexController::class => InvokableFactory::class
+					Controller\IndexController::class => InvokableFactory::class,
+					Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class
+				],
+			],
+			'service_manager' => [
+				'factories' => [
+					Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class
 				],
 			],
 			'view_manager' => [
@@ -137,7 +143,7 @@ class Module implements ConfigProviderInterface
 		];
 	}
 	
-	public function getServiceConfig()
+	/*public function getServiceConfig()
 	{
 		return [
 			'factories' => [
@@ -153,5 +159,5 @@ class Module implements ConfigProviderInterface
 				Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class
 			],
 		];
-	}
+	}*/
 }
