@@ -7,9 +7,9 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Application\Model\PostRepository;
-use Application\Model\Post;
+use Application\Model\PostsTable;
 
-class PostRepositoryFactory implements FactoryInterface
+class PostsTableFactory implements FactoryInterface
 {
 	public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 	{
@@ -17,6 +17,6 @@ class PostRepositoryFactory implements FactoryInterface
 		$resultSetPrototype->setArrayObjectPrototype(new PostRepository());
 
 		$tableGateway = new TableGateway('posts', $container->get(AdapterInterface::class), null, $resultSetPrototype);
-		return new Post($tableGateway);
+		return new PostsTable($tableGateway);
 	}
 }

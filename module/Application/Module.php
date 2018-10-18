@@ -106,12 +106,12 @@ class Module implements ConfigProviderInterface
 				],
 			],
 			'service_manager' => [
-				'aliases' => [
+				/*'aliases' => [
 					Model\PostRepositoryInterface::class => Model\PostRepository::class
-				],
+				],*/
 				'factories' => [
 					Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class,
-					Model\PostRepository::class => InvokableFactory::class
+					Model\PostsTable::class => Model\Factory\PostsTableFactory::class
 				],
 			],
 			'view_manager' => [

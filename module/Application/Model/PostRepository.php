@@ -5,33 +5,25 @@ use DomainException;
 
 class PostRepository implements PostRepositoryInterface
 {
-	private $data = [
-		1 => [
-			'id'    => 1,
-			'title' => 'Hello World #1',
-			'text'  => 'This is our first blog post!',
-		],
-		2 => [
-			'id'    => 2,
-			'title' => 'Hello World #2',
-			'text'  => 'This is our second blog post!',
-		],
-		3 => [
-			'id'    => 3,
-			'title' => 'Hello World #3',
-			'text'  => 'This is our third blog post!',
-		],
-		4 => [
-			'id'    => 4,
-			'title' => 'Hello World #4',
-			'text'  => 'This is our fourth blog post!',
-		],
-		5 => [
-			'id'    => 5,
-			'title' => 'Hello World #5',
-			'text'  => 'This is our fifth blog post!',
-		],
-	];
+	public $id;
+	public $artist;
+	public $text;
+	
+	public function exchangeArray(array $data)
+	{
+		$this->id    = !empty($data['id']) ? $data['id'] : null;
+		$this->title = !empty($data['title']) ? $data['title'] : null;
+		$this->text  = !empty($data['text']) ? $data['text'] : null;
+	}
+	
+	public function getArrayCopy()
+	{
+		return [
+			'id' => $this->id,
+			'artist' => $this->artist,
+			'text' => $this->title,
+		];
+	}
 	
 	public function findAllPosts()
 	{
@@ -55,12 +47,5 @@ class PostRepository implements PostRepositoryInterface
 			$this->data[$id]['text'],
 			$this->data[$id]['id']
 		);
-	}
-	
-	public function exchangeArray(array $data)
-	{
-		$this->id    = !empty($data['id']) ? $data['id'] : null;
-		$this->title = !empty($data['title']) ? $data['title'] : null;
-		$this->text  = !empty($data['text']) ? $data['text'] : null;
 	}
 }
