@@ -56,11 +56,7 @@ class Module implements ConfigProviderInterface
 	{
 		return [
 			'factories' => [
-				Controller\AlbumController::class => function($container) {
-					return new Controller\AlbumController(
-						$container->get(Model\AlbumTable::class)
-					);
-				},
+				Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class
 			],
 		];
 	}

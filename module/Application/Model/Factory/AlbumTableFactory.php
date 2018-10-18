@@ -2,13 +2,13 @@
 
 namespace Application\Model\Factory;
 
-use Application\Model\Album;
-use Application\Model\AlbumTable;
 use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Application\Model\Album;
+use Application\Model\AlbumTable;
 
 class AlbumTableFactory implements FactoryInterface
 {
