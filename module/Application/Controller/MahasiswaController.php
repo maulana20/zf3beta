@@ -1,10 +1,10 @@
 <?php
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\ParentController;
 use Application\Model\MahasiswaModel;
 
-class MahasiswaController extends AbstractActionController
+class MahasiswaController extends ParentController
 {
 	public function indexAction()
 	{

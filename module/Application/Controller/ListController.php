@@ -1,12 +1,11 @@
 <?php
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Application\Model\PostsTable;
 use Application\Model\postRepository;
 
-class ListController extends AbstractActionController
+class ListController extends ParentController
 {
 	private $table;
 	

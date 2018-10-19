@@ -1,14 +1,17 @@
 <?php
 namespace Application\Controller;
 
-use Application\Model\AlbumTable;
 use Zend\Mvc\Controller\AbstractActionController;
+use Application\Model\AlbumTable;
 use Zend\View\Model\ViewModel;
+
 
 use Application\Form\AlbumForm;
 use Application\Model\Album;
+use Application\Controller\ParentController;
 
-class AlbumController extends AbstractActionController
+
+class AlbumController extends ParentController
 {
 	private $table;
 	

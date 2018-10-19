@@ -9,3 +9,4 @@
 [2018-10-16 11:51:00] cmd php data/load_album_fixtures.php
 [2018-10-16 11:52:00] composer require zendframework/zend-paginator
 [2018-10-17 10:30:00] composer require container-interop/container-interop
+[2018-10-19 09:26:00] composer require zendframework/zend-session
