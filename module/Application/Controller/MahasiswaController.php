@@ -9,6 +9,5 @@ class MahasiswaController extends ParentController
 	public function indexAction()
 	{
 		$mahasiswa = new MahasiswaModel();
-		echo $mahasiswa->getData();
 	}
 }

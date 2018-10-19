@@ -1,7 +1,6 @@
 <?php
 namespace Application\Controller;
 
-use Zend\View\Model\ViewModel;
 use Application\Model\AlbumTable;
 use Application\Form\AlbumForm;
 use Application\Model\Album;
@@ -27,7 +26,7 @@ class AlbumController extends ParentController
 		
 		$paginator->setItemCountPerPage(MAX_PAGE);
 		
-		return new ViewModel(['paginator' => $paginator]);
+		return new $this->view(['paginator' => $paginator]);
 		//return new ViewModel([
 		//	'albums' => $this->table->fetchAll(),
 		//]);

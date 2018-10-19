@@ -1,7 +1,6 @@
 <?php
 namespace Application\Controller;
 
-use Zend\View\Model\ViewModel;
 use Application\Model\PostsTable;
 use Application\Model\postRepository;
 
@@ -24,7 +23,7 @@ class ListController extends ParentController
 		
 		$paginator->setItemCountPerPage(MAX_PAGE);
 		
-		return new ViewModel(['paginator' => $paginator]);
+		return new $this->view(['paginator' => $paginator]);
 	}
 	
 	public function addAction()
