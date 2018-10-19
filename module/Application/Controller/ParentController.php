@@ -2,8 +2,8 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\MvcEvent;
+use Zend\ModuleManager\ModuleManager;
 use Zend\Session\Container;
 
 define('MAX_PAGE', 10);
