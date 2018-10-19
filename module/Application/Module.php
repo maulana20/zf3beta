@@ -7,18 +7,17 @@
 
 namespace Application;
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 //use Zend\ModuleManager\ModuleManager;
 //use Zend\Mvc\MvcEvent;
 
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\Navigation;
+define('MAX_PAGE', 10);
+define('EXPIRED', 900);
+define('VERSION', '1.0');
 
 class Module implements ConfigProviderInterface
 {
@@ -96,13 +95,28 @@ class Module implements ConfigProviderInterface
 							],
 						],
 					],
+					'mahasiswa' => [
+						'type'    => Segment::class,
+						'options' => [
+							'route' => '/mahasiswa[/:action[/:id]]',
+							'constraints' => [
+								'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+								'id'     => '[0-9]+',
+							],
+							'defaults' => [
+								'controller' => Controller\MahasiswaController::class,
+								'action'     => 'index',
+							],
+						],
+					],
 				],
 			],
 			'controllers' => [
 				'factories' => [
 					Controller\IndexController::class => InvokableFactory::class,
 					Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class,
-					Controller\ListController::class => Controller\Factory\ListControllerFactory::class
+					Controller\ListController::class => Controller\Factory\ListControllerFactory::class,
+					Controller\MahasiswaController::class => InvokableFactory::class,
 				],
 			],
 			'service_manager' => [
@@ -160,6 +174,10 @@ class Module implements ConfigProviderInterface
 					[
 						'label' => 'Blog',
 						'route' => 'blog',
+					],
+					[
+						'label' => 'Mahasiswa',
+						'route' => 'mahasiswa',
 					],
 				],
 			],
