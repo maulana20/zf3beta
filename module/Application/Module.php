@@ -155,6 +155,14 @@ class Module implements ConfigProviderInterface
 					],
 				],
 			],
+			'db' => [
+				'host'		=> '',
+				'driver'	=> 'Pdo',
+				'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
+				'database'	=> '',
+				'username'	=> '',
+				'password'	=> '',
+			],
 		];
 	}
 }
