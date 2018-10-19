@@ -8,7 +8,7 @@ use Zend\View\Model\ViewModel;
 use Application\Form\AlbumForm;
 use Application\Model\Album;
 
-class AlbumController extends ParentController
+class AlbumController extends AbstractActionController
 {
 	private $table;
 	

@@ -11,15 +11,12 @@ use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
+use Application\Controller\ParentController;
 
 //use Zend\ModuleManager\ModuleManager;
 //use Zend\Mvc\MvcEvent;
 
-define('MAX_PAGE', 10);
-define('EXPIRED', 900);
-define('VERSION', '1.0');
-
-class Module implements ConfigProviderInterface
+class Module extends ParentController implements ConfigProviderInterface
 {
 	const VERSION = '3.0.3-dev';
 	
@@ -183,22 +180,4 @@ class Module implements ConfigProviderInterface
 			],
 		];
 	}
-	
-	/*public function getServiceConfig()
-	{
-		return [
-			'factories' => [
-				Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class
-			],
-		];
-	}
-	
-	public function getControllerConfig()
-	{
-		return [
-			'factories' => [
-				Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class
-			],
-		];
-	}*/
 }

@@ -1,14 +1,14 @@
 <?php
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+define('MAX_PAGE', 10);
+define('EXPIRED', 900);
+define('VERSION', '1.0');
 
-class ParentController extends AbstractActionController
+class ParentController
 {
-	public $view = NULL;
-	function init()
+	public function init()
 	{
-		$this->view = new ViewModel();
+		echo 'aa';
 	}
 }

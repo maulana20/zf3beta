@@ -23,7 +23,7 @@ class ListController extends AbstractActionController
 		$page = ($page < 1) ? 1 : $page;
 		$paginator->setCurrentPageNumber($page);
 		
-		$paginator->setItemCountPerPage(10);
+		$paginator->setItemCountPerPage(MAX_PAGE);
 		
 		return new ViewModel(['paginator' => $paginator]);
 	}
