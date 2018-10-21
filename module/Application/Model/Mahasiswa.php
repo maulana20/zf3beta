@@ -2,7 +2,7 @@
 namespace Application\Model;
 use Application\Model\TableGatewayAdapter;
 
-class MahasiswaModel extends TableGatewayAdapter
+class Mahasiswa extends TableGatewayAdapter
 {
 	function getList()
 	{

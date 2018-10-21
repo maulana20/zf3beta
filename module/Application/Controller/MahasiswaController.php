@@ -2,13 +2,13 @@
 namespace Application\Controller;
 
 use Application\Controller\ParentController;
-use Application\Model\MahasiswaModel;
+use Application\Model\Mahasiswa;
 
 class MahasiswaController extends ParentController
 {
 	public function indexAction()
 	{
-		$mahasiswa = new MahasiswaModel();
+		$mahasiswa = new Mahasiswa();
 		return new $this->view(['list' => $mahasiswa->getList()]);
 	}
 }
