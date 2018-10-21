@@ -9,6 +9,6 @@ class MahasiswaController extends ParentController
 	public function indexAction()
 	{
 		$mahasiswa = new MahasiswaModel();
-		$mahasiswa->getList();
+		return new $this->view(['list' => $mahasiswa->getList()]);
 	}
 }

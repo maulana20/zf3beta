@@ -1,0 +1,26 @@
+<?php
+$title = 'My Posts';
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+<p>
+    <a href="<?= $this->url('mahasiswa', ['action' => 'add']) ?>">Add new post</a>
+</p>
+
+<table class="table">
+<tr>
+    <th>Title</th>
+    <th>Text</th>
+    <th>&nbsp;</th>
+</tr>
+<?php foreach ($this->list as $post) : ?>
+    <tr>
+        <td><?= $this->escapeHtml($post->title) ?></td>
+        <td><?= $this->escapeHtml($post->text) ?></td>
+        <td>
+            <a href="<?= $this->url('mahasiswa', ['action' => 'edit', 'id' => $album->id]) ?>">Edit</a>
+            <a href="<?= $this->url('mahasiswa', ['action' => 'delete', 'id' => $album->id]) ?>">Delete</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
