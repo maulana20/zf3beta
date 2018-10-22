@@ -19,12 +19,37 @@ class UserController extends ParentController
 	public function addAction()
 	{
 		$request = $this->getRequest();
-		
-		if (!$request->isPost()) return $this->view->setTemplate('administration/user/add');;
-		
 		$user = new User();
+		
+		if (!$request->isPost()) return $this->view->setTemplate('administration/user/add');
+		
 		$data = array('artist' => $request->getPost('artist'), 'title' => $request->getPost('title'));
 		$user->add($data);
-        return $this->redirect()->toRoute('user', ['action' => 'index']);
+		return $this->redirect()->toRoute('user', ['action' => 'index']);
+	}
+	
+	public function deleteAction()
+	{
+		$request = $this->getRequest();
+		$user = new User();
+		
+		$id = (int) $this->params()->fromRoute('id', 0);
+		if (!$id) return $this->redirect()->toRoute('user');
+		
+		if ($request->isPost()) {
+			$del = $request->getPost('del', 'No');
+			
+			if ($del == 'Yes') {
+				$id = $request->getPost('id');
+				$user->delete($id);
+			}
+			
+			return $this->redirect()->toRoute('user');
+		}
+		
+		return [
+			'id' => $id,
+			'user' => $user->get($id),
+		];
 	}
 }

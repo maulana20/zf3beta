@@ -18,7 +18,7 @@ class Module implements ConfigProviderInterface
 					'user' => [
 						'type'    => Segment::class,
 						'options' => [
-							'route'    => '/user[/:action]',
+							'route'    => '/user[/:action[/:id]]',
 							'defaults' => [
 								'controller' => Controller\UserController::class,
 								'action'     => 'index',

@@ -18,4 +18,26 @@ class User extends TableGatewayAdapter
 		$this->tableGateway->getSql()->setTable('album');
 		$this->tableGateway->insert($data);
 	}
+	
+	public function delete($id)
+	{
+		$this->tableGateway->getSql()->setTable('album');
+		$this->tableGateway->delete(['id' => (int) $id]);
+	}
+	
+	public function get($id)
+	{
+		$id = (int) $id;
+		$this->tableGateway->getSql()->setTable('album');
+		$rowset = $this->tableGateway->select(['id' => $id]);
+		$row = $rowset->current();
+		if (! $row) {
+			throw new RuntimeException(sprintf(
+				'Could not find row with identifier %d',
+				$id
+			));
+		}
+
+		return $row;
+	}
 }
