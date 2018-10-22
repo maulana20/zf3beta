@@ -11,4 +11,10 @@ class Mahasiswa extends TableGatewayAdapter
 		
 		return $this->paginator('posts', $page, $max_page);
 	}
+	
+	function add($data)
+	{
+		$this->tableGateway->getSql()->setTable('posts');
+		$this->tableGateway->insert($data);
+	}
 }

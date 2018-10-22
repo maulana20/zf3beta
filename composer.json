@@ -25,7 +25,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Application\\": "module/application/"
+            "Application\\": "module/application/",
+            "User\\": "module/user/"
         }
     },
     "autoload-dev": {
