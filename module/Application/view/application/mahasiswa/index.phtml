@@ -24,3 +24,9 @@ $this->headTitle($title);
     </tr>
 <?php endforeach; ?>
 </table>
+<?= $this->paginationControl(
+	$this->list,
+	'sliding',
+	'partial/paginator',
+	['route' => 'mahasiswa']
+); ?>
