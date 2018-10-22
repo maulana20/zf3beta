@@ -15,4 +15,16 @@ class UserController extends ParentController
 		
 		return new $this->view(['list' => $user_list]);
 	}
+	
+	public function addAction()
+	{
+		$request = $this->getRequest();
+		
+		if (!$request->isPost()) return $this->view->setTemplate('administration/user/add');;
+		
+		$user = new User();
+		$data = array('artist' => $request->getPost('artist'), 'title' => $request->getPost('title'));
+		$user->add($data);
+        return $this->redirect()->toRoute('user', ['action' => 'index']);
+	}
 }

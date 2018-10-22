@@ -12,4 +12,10 @@ class User extends TableGatewayAdapter
 		
 		return $this->paginator('album', $page, $max_page);
 	}
+	
+	function add($data)
+	{
+		$this->tableGateway->getSql()->setTable('album');
+		$this->tableGateway->insert($data);
+	}
 }
