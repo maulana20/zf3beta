@@ -1,10 +1,4 @@
 <?php
-/**
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 namespace Application;
 
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -41,7 +35,7 @@ class Module implements ConfigProviderInterface
 							],
 						],
 					],
-					'album' => [
+					/*'album' => [
 						'type'    => Segment::class,
 						'options' => [
 							'route' => '/album[/:action[/:id]]',
@@ -82,24 +76,24 @@ class Module implements ConfigProviderInterface
 								'action'     => 'index',
 							],
 						],
-					],
+					],*/
 				],
 			],
 			'controllers' => [
 				'factories' => [
 					Controller\IndexController::class => InvokableFactory::class,
-					Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class,
-					Controller\ListController::class => Controller\Factory\ListControllerFactory::class,
-					Controller\MahasiswaController::class => InvokableFactory::class,
+					//Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class,
+					//Controller\ListController::class => Controller\Factory\ListControllerFactory::class,
+					//Controller\MahasiswaController::class => InvokableFactory::class,
 				],
 			],
 			'service_manager' => [
-				/*'aliases' => [
-					Model\PostRepositoryInterface::class => Model\PostRepository::class
-				],*/
+				'aliases' => [
+					//Model\PostRepositoryInterface::class => Model\PostRepository::class
+				],
 				'factories' => [
-					Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class,
-					Model\PostsTable::class => Model\Factory\PostsTableFactory::class
+					//Model\AlbumTable::class => Model\Factory\AlbumTableFactory::class,
+					//Model\PostsTable::class => Model\Factory\PostsTableFactory::class
 				],
 			],
 			'view_manager' => [
