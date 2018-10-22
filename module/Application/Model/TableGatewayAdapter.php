@@ -29,7 +29,7 @@ class TableGatewayAdapter
 	
 	public function paginator($table, $page = 1, $max_page = 10)
 	{
-		$paginator = new Paginator(new DbSelect(new Select('posts'), $this->tableGateway->getAdapter(), NULL));
+		$paginator = new Paginator(new DbSelect(new Select($table), $this->tableGateway->getAdapter(), NULL));
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage($max_page);
 		

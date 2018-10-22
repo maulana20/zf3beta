@@ -125,33 +125,25 @@ class Module implements ConfigProviderInterface
 						'route' => 'home',
 					],
 					[
-						'label' => 'Album',
-						'route' => 'album',
+						'label' => 'User',
+						'route' => 'user',
 						'pages' => [
 							[
 								'label' => 'Add',
-								'route' => 'album',
+								'route' => 'user',
 								'action' => 'add',
 							],
 							[
 								'label' => 'Edit',
-								'route' => 'album',
+								'route' => 'user',
 								'action' => 'edit',
 							],
 							[
 								'label' => 'Delete',
-								'route' => 'album',
+								'route' => 'user',
 								'action' => 'delete',
 							],
 						],
-					],
-					[
-						'label' => 'Blog',
-						'route' => 'blog',
-					],
-					[
-						'label' => 'Mahasiswa',
-						'route' => 'mahasiswa',
 					],
 				],
 			],
