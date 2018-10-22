@@ -23,5 +23,5 @@ return [
 	'Zend\Router',
 	'Zend\Validator',
 	'application',
-	'user'
+	'administration'
 ];
