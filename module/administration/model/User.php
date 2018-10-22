@@ -7,9 +7,9 @@ class User extends TableGatewayAdapter
 {
 	function getList($page = NULL, $max_page = 10)
 	{
-		$this->tableGateway->getSql()->setTable('user');
+		$this->tableGateway->getSql()->setTable('album');
 		if (empty($page)) return $this->tableGateway->select();
 		
-		return $this->paginator('user', $page, $max_page);
+		return $this->paginator('album', $page, $max_page);
 	}
 }
