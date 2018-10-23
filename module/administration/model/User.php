@@ -3,14 +3,13 @@ namespace Administration\Model;
 
 use Application\Model\TableGatewayAdapter;
 
-class User extends TableGatewayAdapter
+class User
 {
 	function getList($page = NULL, $max_page = 10)
 	{
-		$this->tableGateway->getSql()->setTable('album');
-		if (empty($page)) return $this->tableGateway->select();
+		if (empty($page)) return TableGatewayAdapter::init('album')->select();
 		
-		return $this->paginator('album', $page, $max_page);
+		return TableGatewayAdapter::paginator('album', $page, $max_page);
 	}
 	
 	function add($data)
@@ -21,15 +20,13 @@ class User extends TableGatewayAdapter
 	
 	public function delete($id)
 	{
-		$this->tableGateway->getSql()->setTable('album');
-		$this->tableGateway->delete(['id' => (int) $id]);
+		TableGatewayAdapter::init('album')->delete(['id' => (int) $id]);
 	}
 	
 	public function get($id)
 	{
 		$id = (int) $id;
-		$this->tableGateway->getSql()->setTable('album');
-		$rowset = $this->tableGateway->select(['id' => $id]);
+		$rowset = TableGatewayAdapter::init('album')->select(['id' => $id]);
 		$row = $rowset->current();
 		if (! $row) {
 			throw new RuntimeException(sprintf(

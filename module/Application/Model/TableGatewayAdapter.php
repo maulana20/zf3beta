@@ -13,7 +13,7 @@ class TableGatewayAdapter
 {
 	public $tableGateway = NULL;
 	
-	public function __construct()
+	public function init($table)
 	{
 		$adapter = new Adapter([
 			'host'		=> '',
@@ -24,12 +24,21 @@ class TableGatewayAdapter
 			'password'	=> '',
 		]);
 		
-		return $this->tableGateway = new TableGateway('demo', $adapter);
+		return new TableGateway($table, $adapter);
 	}
 	
 	public function paginator($table, $page = 1, $max_page = 10)
 	{
-		$paginator = new Paginator(new DbSelect(new Select($table), $this->tableGateway->getAdapter(), NULL));
+		$adapter = new Adapter([
+			'host'		=> '',
+			'driver'	=> 'Pdo',
+			'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
+			'database'	=> '',
+			'username'	=> '',
+			'password'	=> '',
+		]);
+		
+		$paginator = new Paginator(new DbSelect(new Select($table), $adapter, NULL));
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage($max_page);
 		
