@@ -1,42 +1,41 @@
 <?php
 namespace Administration\Model;
 
-use Application\Model\TableGatewayAdapter;
-use Zend\Db\Sql\Select;
+use Application\Model\Versa_Gateway_Adapter;
 
-class User
+class User extends Versa_Gateway_Adapter
 {
 	public function getList($page = NULL, $max_page = 10)
 	{
-		if (empty($page)) return TableGatewayAdapter::init('album')->select();
+		if (empty($page)) return $this->init('album')->select();
 		
-		$select = new Select();
-		$select->from(array('a' => 'album'), array('MAX(a.title) as title'))
-			->join(array('b' => 'posts'), 'a.id=b.id');
+		$select = $this->select();
+		$select->from('album');
 		
-		return TableGatewayAdapter::paginator($select, $page, $max_page);
+		return $this->paginator($select, $page, $max_page);
 	}
 	
 	public function add($data)
 	{
-		TableGatewayAdapter::init('album')->insert($data);
+		$this->init('album')->insert($data);
 	}
 	
 	public function delete($id)
 	{
-		TableGatewayAdapter::init('album')->delete(['id' => (int) $id]);
+		$this->init('album')->delete(['id' => (int) $id]);
 	}
 	
 	public function update($data, $id)
 	{
-		TableGatewayAdapter::init('album')->update($data, ['id' => $id]);
+		$this->init('album')->update($data, ['id' => $id]);
 	}
 	
 	public function get($id)
 	{
 		$id = (int) $id;
-		$select = TableGatewayAdapter::init('album')->select();
-		$rowset = TableGatewayAdapter::init('album')->select(['id' => $id]);
+		
+		$select = $this->select()->from('album')->where(['id' => $id]);
+		$rowset = $this->init('album')->selectWith($select);
 		$row = $rowset->current();
 		if (! $row) {
 			throw new RuntimeException(sprintf(

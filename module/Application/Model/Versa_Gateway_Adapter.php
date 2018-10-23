@@ -4,14 +4,12 @@ namespace Application\Model;
 use RuntimeException;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
-
+use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 
-class TableGatewayAdapter
+class Versa_Gateway_Adapter
 {
-	public $tableGateway = NULL;
-	
 	public function init($table)
 	{
 		$adapter = new Adapter([
@@ -42,5 +40,10 @@ class TableGatewayAdapter
 		$paginator->setItemCountPerPage($max_page);
 		
 		return $paginator;
+	}
+	
+	public function select()
+	{
+		return new Select();
 	}
 }
