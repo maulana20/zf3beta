@@ -7,7 +7,7 @@ class User extends Versa_Gateway_Adapter
 {
 	public function getList($page = NULL, $max_page = 10)
 	{
-		if (empty($page)) return $this->init('album')->select();
+		if (empty($page)) return $this->init('tblUser')->select();
 		
 		$select = $this->select();
 		$select->from(array('a' => 'tblUser'), array('*', 'user_name as login_name'))
@@ -33,17 +33,17 @@ class User extends Versa_Gateway_Adapter
 	
 	public function update($data, $id)
 	{
-		$this->init('album')->update($data, ['id' => $id]);
+		$this->init('tblUser')->update($data, ['user_id' => $id]);
 	}
 	
 	public function get($id)
 	{
 		$id = (int) $id;
 		
-		$select = $this->select()->from('album')->where(['id' => $id]);
+		$select = $this->select()->from('tblUser')->where(['user_id' => $id]);
 		//echo $select->getSqlString();
 		
-		$rowset = $this->init('album')->selectWith($select);
+		$rowset = $this->init('tblUser')->selectWith($select);
 		$row = $rowset->current();
 		if (! $row) {
 			throw new RuntimeException(sprintf(

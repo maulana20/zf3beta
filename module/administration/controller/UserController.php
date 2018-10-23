@@ -65,4 +65,40 @@ class UserController extends ParentController
 		
 		return $this->redirect()->toROute('user', ['action' => 'index']);
 	}
+	
+	public function activeAction()
+	{
+		$request = $this->getRequest();
+		$user = new User();
+		
+		$id = (int) $this->params()->fromRoute('id', 0);
+		if (!$id) return $this->redirect()->toRoute('user');
+		
+		$data = array('user_status' => 'A');
+		$user->update($data, $id);
+		
+		
+		$page = (int) $this->params()->fromQuery('page', 1);
+		$page += 1;
+		
+		return $this->redirect()->toROute('user', ['action' => 'index', 'page' => $page]);
+	}
+	
+	public function inactiveAction()
+	{
+		$request = $this->getRequest();
+		$user = new User();
+		
+		$id = (int) $this->params()->fromRoute('id', 0);
+		if (!$id) return $this->redirect()->toRoute('user');
+		
+		$data = array('user_status' => 'I');
+		$user->update($data, $id);
+		
+		
+		$page = (int) $this->params()->fromQuery('page', 1);
+		$page += 1;
+		
+		return $this->redirect()->toROute('user', ['action' => 'index', 'page' => $page]);
+	}
 }

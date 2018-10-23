@@ -30,8 +30,10 @@ $this->headTitle($title);
         <td align="right"><?= number_format($user->deposit_value); ?></td>
         <td><?= $user->user_status; ?></td>
         <td>
-            <a href="<?= $this->url('user', ['action' => 'edit', 'id' => $user->id]) ?>">Edit</a>
-            <a href="<?= $this->url('user', ['action' => 'delete', 'id' => $user->id]) ?>">Delete</a>
+            <a href="<?= $this->url('user', ['action' => 'edit', 'id' => $user->user_id]) ?>">Edit</a>
+            <a href="<?= $this->url('user', ['action' => 'active', 'id' => $user->user_id]) ?>">A</a>
+            <a href="<?= $this->url('user', ['action' => 'inactive', 'id' => $user->user_id]) ?>">I</a>
+            <a href="<?= $this->url('user', ['action' => 'delete', 'id' => $user->user_id]) ?>">Del</a>
         </td>
     </tr>
 <?php endforeach; ?>

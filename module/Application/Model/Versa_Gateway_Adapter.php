@@ -13,12 +13,12 @@ class Versa_Gateway_Adapter
 	public function init($table)
 	{
 		$adapter = new Adapter([
-			'host'		=> '',
-			'driver'	=> 'Pdo',
-			'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
-			'database'	=> '',
-			'username'	=> '',
-			'password'	=> '',
+			'host'		=> 'localhost',
+			'driver'	=> 'sqlsrv',
+			//'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
+			'database'	=> 'demo',
+			'username'	=> 'sa',
+			'password'	=> 'versa12',
 		]);
 		
 		return new TableGateway($table, $adapter);
