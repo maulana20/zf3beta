@@ -5,7 +5,6 @@ use RuntimeException;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 
-use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 
@@ -27,7 +26,7 @@ class TableGatewayAdapter
 		return new TableGateway($table, $adapter);
 	}
 	
-	public function paginator($table, $page = 1, $max_page = 10)
+	public function paginator($select, $page = 1, $max_page = 10)
 	{
 		$adapter = new Adapter([
 			'host'		=> '',
@@ -38,7 +37,7 @@ class TableGatewayAdapter
 			'password'	=> '',
 		]);
 		
-		$paginator = new Paginator(new DbSelect(new Select($table), $adapter, NULL));
+		$paginator = new Paginator(new DbSelect($select, $adapter, NULL));
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage($max_page);
 		
