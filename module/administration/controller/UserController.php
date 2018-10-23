@@ -25,6 +25,7 @@ class UserController extends ParentController
 		
 		$data = array('artist' => $request->getPost('artist'), 'title' => $request->getPost('title'));
 		$user->add($data);
+		
 		return $this->redirect()->toRoute('user', ['action' => 'index']);
 	}
 	
@@ -47,9 +48,21 @@ class UserController extends ParentController
 			return $this->redirect()->toRoute('user');
 		}
 		
-		return [
-			'id' => $id,
-			'user' => $user->get($id),
-		];
+		return [ 'id' => $id, 'user' => $user->get($id) ];
+	}
+	
+	public function editAction()
+	{
+		$request = $this->getRequest();
+		$user = new User();
+		
+		$id = (int) $this->params()->fromRoute('id', 0);
+		if (0 === $id) return $this->redirect()->toRoute('user', ['action' => 'add']);
+		if (!$request->isPost()) return [ 'id' => $id, 'user' => $user->get($id) ];
+		
+		$data = array('artist' => $request->getPost('artist'), 'title' => $request->getPost('title'));
+		$user->update($data, $id);
+		
+		return $this->redirect()->toROute('user', ['action' => 'index']);
 	}
 }
