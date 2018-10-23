@@ -27,12 +27,12 @@ class Versa_Gateway_Adapter
 	public function paginator($select, $page = 1, $max_page = 10)
 	{
 		$adapter = new Adapter([
-			'host'		=> '',
-			'driver'	=> 'Pdo',
-			'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
-			'database'	=> '',
-			'username'	=> '',
-			'password'	=> '',
+			'host'		=> 'localhost',
+			'driver'	=> 'sqlsrv',
+			//'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
+			'database'	=> 'demo',
+			'username'	=> 'sa',
+			'password'	=> 'versa12',
 		]);
 		
 		$paginator = new Paginator(new DbSelect($select, $adapter, NULL));

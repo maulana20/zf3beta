@@ -10,7 +10,13 @@ class User extends Versa_Gateway_Adapter
 		if (empty($page)) return $this->init('album')->select();
 		
 		$select = $this->select();
-		$select->from('album');
+		$select->from(array('a' => 'tblUser'), array('*', 'user_name as login_name'))
+				->join(array('b' => 'tblDeposit'), 'a.user_id=b.user_id', array('deposit_value'))
+				->join(array('c' => 'tblGroup'), 'a.group_id = c.group_id', array('group_name'))
+				//->join(array('d' => 'tblUser'), 'a.user_create_by = d.user_id', array('d.user_name as create_by'))
+				->where("a.user_status <> 'D'")
+				->order('a.user_name DESC');
+		//echo $select->getSqlString(); exit();
 		
 		return $this->paginator($select, $page, $max_page);
 	}
@@ -35,6 +41,8 @@ class User extends Versa_Gateway_Adapter
 		$id = (int) $id;
 		
 		$select = $this->select()->from('album')->where(['id' => $id]);
+		//echo $select->getSqlString();
+		
 		$rowset = $this->init('album')->selectWith($select);
 		$row = $rowset->current();
 		if (! $row) {

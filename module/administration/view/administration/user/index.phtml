@@ -9,14 +9,26 @@ $this->headTitle($title);
 
 <table class="table">
 <tr>
-    <th>Title</th>
-    <th>Artist</th>
+    <th>Agency Code</th>
+    <th>Username</th>
+    <th>Trading Name</th>
+    <th>Group</th>
+    <th>Last Login</th>
+    <th>Last Transaction</th>
+    <th>Deposit</th>
+    <th>Status</th>
     <th>&nbsp;</th>
 </tr>
 <?php foreach ($this->list as $user) : ?>
     <tr>
-        <td><?= $this->escapeHtml($user->title) ?></td>
-        <td><?= $this->escapeHtml($user->artist) ?></td>
+        <td><?= $user->user_code . '-' . sprintf("%06d", $user->user_id); ?></td>
+        <td><?= $user->user_name; ?></td>
+        <td><?= $user->user_trading_name; ?></td>
+        <td><?= $user->group_name; ?></td>
+        <td><?= !empty($user->user_login) ? date('d/m/Y H:i:s', $user->user_login) : 'Never Login'; ?></td>
+        <td><?= !empty($user->user_last_order) ? date('d/m/Y H:i:s', $user->user_last_order) : 'Never Transaction'; ?></td>
+        <td align="right"><?= number_format($user->deposit_value); ?></td>
+        <td><?= $user->user_status; ?></td>
         <td>
             <a href="<?= $this->url('user', ['action' => 'edit', 'id' => $user->id]) ?>">Edit</a>
             <a href="<?= $this->url('user', ['action' => 'delete', 'id' => $user->id]) ?>">Delete</a>
