@@ -46,6 +46,7 @@ class ParentController extends AbstractActionController
 try {
 		$this->view = new ViewModel();
 		$this->session = new Container('namespace');
+		
 		$this->session->user_id = 1;
 		
 		if ($this->session->user_id == 1) {
@@ -65,12 +66,68 @@ try {
 		} else {
 			$user = new User();
 			if ($this->getEvent()->getRouteMatch()->getMatchedRouteName() != 'admin') {
-				$user->updateLifeTime($this->session->user_id, time()+EXPIRED);
+				$user->updateLifeTime($this->session->user_id, time()+ EXPIRED);
 			}
 		}
 } catch (Exception $e) {
 	echo $e->getMessage();
 	exit();
 }
+	}
+	
+	public function checkRole($role)
+	{
+		if (!$this->isInRole($role)) {
+			if (!empty($this->session->user_id)) {
+				$user = new User();
+				$user->updateLifeTime($this->session->user_id, time());
+			}
+			$this->destroyRole();
+			//$this->_transfer('default', 'admin', 'noaccess');
+		}
+	}
+	
+	public function checkpopRole($role)
+	{
+		if (!$this->isInRole($role)) {
+			if (!empty($this->session->user_id)) {
+				$user = new User();
+				$user->updateLifeTime($this->session->user_id, time());
+			}
+			$this->destroyRole();
+			//$this->_transfer('default', 'admin', 'nopopup');
+		}
+	}
+
+	public function isInRole($role)
+	{
+		$acl = unserialize($this->session->acl);
+		return ($acl->isAllowed($role));
+	}
+
+
+//=================================
+// ROLE
+//=================================
+	public function setRole($allow)
+	{
+		$group = new Group();
+		$acl = new Acl();
+		$access_all = $group->getAccessAll();
+		
+		foreach ($access_all as $a) {
+			$acl->addRole(new Zend_Acl_Role($a));
+		}
+		foreach ($allow as $a) {
+			$acl->allow($a);
+		}
+		
+		$this->session->acl = serialize($acl);
+	}
+	
+	public function destroyRole()
+	{
+		$this->session->getManager()->destroy();
+		//Zend_Session::expireSessionCookie();
 	}
 }
