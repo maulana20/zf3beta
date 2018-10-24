@@ -6,6 +6,10 @@ use Zend\Mvc\MvcEvent;
 use Zend\ModuleManager\ModuleManager;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
+use Zend\Permissions\Acl\Acl;;
+use Zend\Permissions\Acl\Role\GenericRole as Role;
+use Administration\Model\Group;
+use Administration\Model\User;
 
 define('MAX_PAGE', 10);
 define('EXPIRED', 900);
@@ -39,7 +43,34 @@ class ParentController extends AbstractActionController
 	
 	public function setUp()
 	{
-		$this->session = new Container('namespace');
+try {
 		$this->view = new ViewModel();
+		$this->session = new Container('namespace');
+		$this->session->user_id = 1;
+		
+		if ($this->session->user_id == 1) {
+			$this->session->setExpirationSeconds(1800);
+		} else {
+			$this->session->setExpirationSeconds(EXPIRED);
+		}
+		
+		if (!isset($this->session->acl)) {
+			$group = new Group();
+			$acl = new Acl();
+			$access_all = $group->getAccessAll();
+			foreach ($access_all as $a) {
+				$acl->addRole(new Role($a));
+			}
+			$this->session->acl = serialize($acl);
+		} else {
+			$user = new User();
+			if ($this->getEvent()->getRouteMatch()->getMatchedRouteName() != 'admin') {
+				$user->updateLifeTime($this->session->user_id, time()+EXPIRED);
+			}
+		}
+} catch (Exception $e) {
+	echo $e->getMessage();
+	exit();
+}
 	}
 }

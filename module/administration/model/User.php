@@ -31,7 +31,7 @@ class User extends Versa_Gateway_Adapter
 		$this->init('album')->delete(['id' => (int) $id]);
 	}
 	
-	public function update($data, $id)
+	public function update($id, $data)
 	{
 		$this->init('tblUser')->update($data, ['user_id' => $id]);
 	}
@@ -53,5 +53,13 @@ class User extends Versa_Gateway_Adapter
 		}
 
 		return $row;
+	}
+	
+	function updateLifeTime($id, $time) 
+	{
+		$data = array(
+			'user_lifetime' => $time,
+		);
+		$this->update($id, $data);
 	}
 }

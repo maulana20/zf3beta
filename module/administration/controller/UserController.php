@@ -75,7 +75,7 @@ class UserController extends ParentController
 		if (!$id) return $this->redirect()->toRoute('user');
 		
 		$data = array('user_status' => 'A');
-		$user->update($data, $id);
+		$user->update($id, $data);
 		
 		
 		$page = (int) $this->params()->fromQuery('page', 1);
@@ -93,7 +93,7 @@ class UserController extends ParentController
 		if (!$id) return $this->redirect()->toRoute('user');
 		
 		$data = array('user_status' => 'I');
-		$user->update($data, $id);
+		$user->update($id, $data);
 		
 		
 		$page = (int) $this->params()->fromQuery('page', 1);

@@ -21,7 +21,8 @@
         "zendframework/zend-navigation": "^2.9",
         "zendframework/zend-paginator": "^2.8",
         "container-interop/container-interop": "^1.2",
-        "zendframework/zend-session": "^2.8"
+        "zendframework/zend-session": "^2.8",
+        "zendframework/zend-permissions-acl": "^2.7"
     },
     "autoload": {
         "psr-4": {
