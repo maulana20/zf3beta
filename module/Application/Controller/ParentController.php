@@ -441,7 +441,7 @@ try {
 	
 	public function printResponse($status, $message = NULL, $content = NULL)
 	{
-		header('Content-Type: application/json');
+		$response = NULL;
 		$response['status'] = $status;
 		$response['message'] = $message;
 		$response['content'] = $content;

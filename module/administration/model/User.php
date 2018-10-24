@@ -55,24 +55,48 @@ class User extends Versa_Gateway_Adapter
 		return $this->paginator($select, $page, $max_page);
 	}
 	
-	function getRow($id)
+	public function getRow($id)
 	{
-		$id = (int) $id;
-		
 		$select = $this->select()->from('tblUser')->where(['user_id' => $id]);
 		$rowset = $this->init('tblUser')->selectWith($select)->current();
-		if ($rowset->user_status != 'D') {
-			return (array) $rowset;
-		} else {
-			return NULL;
+		
+		return ($rowset->user_status != 'D') ? (array) $rowset : NULL;
+	}
+	
+	public function getEmail($id)
+	{
+		$select = $this->select()->from('tblContact')->where(['contacttype_id' => 1, 'user_id' => $id]);
+		$rowset = $this->init('tblContact')->selectWith($select)->current();
+		
+		return $rowset->contact_detail;
+	}
+	
+	function getPhone($id)
+	{
+		$result = array();
+		
+		$select = $this->select()->from('tblPhone')->where(['user_id' => $id])->order('phone_id');
+		$query = $this->init('tblContact')->selectWith($select);
+		foreach ($query as $value) {
+			$result[] = ((array) $value);
 		}
+		
+		return $result;
+	}
+	
+	function getDeposit($id)
+	{
+		$select = $this->select()->from('tblDeposit')->where(['user_id' => $id]);
+		$rowset = $this->init('tblDeposit')->selectWith($select)->current();
+		
+		return $rowset->deposit_value;
 	}
 	
 	function updateLifeTime($id, $time) 
 	{
-		$data = array(
-			'user_lifetime' => $time,
-		);
+		$data = array();
+		$data['user_lifetime'] = $time;
+		
 		$this->update($id, $data);
 	}
 }

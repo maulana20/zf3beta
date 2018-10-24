@@ -36,6 +36,61 @@ class AdminController extends ParentController
 		return $this->redirect()->toRoute('user', ['action' => 'index']);
 	}
 	
+	function ajaxresetloginAction()
+	{
+		$user = new User();
+		//$userLog = new userLogModel();
+		$request = $this->getRequest();
+		
+		$is_agree = $request->getPost('is_agree', 0);
+		if (!$is_agree) {
+			$this->printResponse('failed', 'Silahkkan ceklist Setuju', 'Silahkkan ceklist Setuju');
+			exit();
+		}
+		$user_row = $user->getRow($this->session->user_id);
+		//$this->session->user_name = $user_row['user_name'];
+		if (empty($user_row['user_session'])) {
+			$this->printResponse('failed', 'Gagal mendapatkan session', 'Gagal mendapatkan session');
+			exit();
+		}
+		// UPDATE LIFETIME
+		if (! empty ( $this->session->user_id )) {
+			$user->updateLifeTime($this->session->user_id, time());
+			//$userLog->add($this->session->user_id, 'Log out');
+			//delete token
+			if ((DATABASE == 'klikmbc') || (DATABASE == 'demox')) {
+				if ($this->session->tokenExpired == 'onetime') {
+					$token = new TokenModel();
+					$token->delete($this->session->tokenId);
+				}
+			}
+		}
+		// DELETE SESSION PADA BROWSER SENDIRI
+		$userLog->add($this->session->user_id, 'force login');
+		$this->destroyRole();
+		// DELETE COOKIE PADA TEMP SESSION
+		shell_exec('echo Y| DEL D:\\temp\\' . $user_row['user_session'] . ' /Q');
+		//sleep(2);
+		
+		$this->printResponse('success', 'Login berhasil', 'Login berhasil');
+		exit();
+	}
+	
+	function noaccessAction()
+	{
+		$this->printResponse('failed', 'SESSION TIMEOUT', array('flag'=>'alert', 'alert'=>'sesi habis'));
+	}
+	
+	function nopopupAction()
+	{
+		$this->printResponse('failed', 'SESSION TIMEOUT', array('flag'=>'alert', 'alert'=>'sesi habis'));
+	}
+	
+	function noactionAction()
+	{
+		$this->printResponse('failed', 'THIS PAGE UNDER CONSTRUCTION !!!', array('flag'=>'alert', 'alert'=>'halaman sedang dibuat'));
+	}
+	
 	public function logoutAction()
 	{
 		$user = new User();
@@ -46,18 +101,36 @@ class AdminController extends ParentController
 		echo 'anda sudah logout ganteng'; exit();
 	}
 	
+	function isonloginAction()
+	{
+		$user = new User();
+		$response['status'] = 'failed';
+		$response['message'] = 'Gagal Login';
+		$response['content'] = array('info' => NULL, 'url_login' => URL_LOGIN, 'url_logout' => $this->session->url_logout);
+		
+		if($this->session->user_name) {
+			$response['status'] = 'success';
+			$response['message'] = 'Berhasil login';
+			$response['content'] = array('info' => 'Berhasil', 'url_login' => URL_LOGIN, 'url_logout' => $this->session->url_logout);
+		}
+		echo json_encode($response);
+		exit();
+	}
+	
 	private function _getMenuCaption($access_menu)
 	{
 		$result = NULL;
 		foreach ($access_menu as $k => $v) {
-			if (is_array($v['node'])) {
+			$node = (!empty($v['node'])) ? $v['node'] : NULL;
+			if (is_array($node)) {
 				$i = -1;
 				foreach ($v['node'] as $key => $val) {
 					$i++;
-					if ($val['node']) {
+					$_node = (!empty($val['node'])) ? $val['node'] : NULL;
+					if ($_node) {
 						// jadi array
 						$j = -1;
-						foreach ($val['node'] as $kkey => $vval) {
+						foreach ($_node as $kkey => $vval) {
 							$j++;
 							$result[$v['caption']][$i][$val['caption']][$j] = $vval['caption'];
 						}
@@ -81,7 +154,7 @@ class AdminController extends ParentController
 	
 	function getuserloginAction()
 	{
-		$user = new UserModel();
+		$user = new User();
 		$email = $user->getEmail($this->session->user_id);
 		$phone_list = $user->getPhone($this->session->user_id);
 		$content['data']['user']['user_real_name'] = $this->session->user_trading;
@@ -103,7 +176,7 @@ class AdminController extends ParentController
 		$response['message'] = Null;
 		$response['status'] = 'success';
 		$response['content'] = $content;
-		echo Zend_Json::encode($response);
+		echo json_encode($response);
 		exit();
 	}
 	
@@ -115,7 +188,7 @@ class AdminController extends ParentController
 		$response['message'] = Null;
 		$response['status'] = 'success';
 		$response['content'] = $content;
-		echo Zend_Json::encode($response);
+		echo json_encode($response);
 		exit();
 	}
 	
@@ -127,5 +200,15 @@ class AdminController extends ParentController
 	function getzopimAction()
 	{
 		return 84;
+	}
+	
+	function isUnlimitedDownline()
+	{
+		return 70;
+	}
+	
+	function iscanchangeupline()
+	{
+		return 70;
 	}
 }
