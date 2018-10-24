@@ -86,7 +86,7 @@ class User extends Versa_Gateway_Adapter
 		$select = $this->select()->from('tblContact')->where(['contacttype_id' => 1, 'user_id' => $id]);
 		$rowset = $this->init('tblContact')->selectWith($select)->current();
 		
-		return $rowset->contact_detail;
+		return (!empty($rowset->contact_detail)) ? $rowset->contact_detail : NULL;
 	}
 	
 	function getPhone($id)
@@ -108,6 +108,14 @@ class User extends Versa_Gateway_Adapter
 		$rowset = $this->init('tblDeposit')->selectWith($select)->current();
 		
 		return $rowset->deposit_value;
+	}
+	
+	function getContact($id)
+	{
+		$select = $this->select()->from('tblContact')->where(['user_id' => $id]);
+		$rowset = $this->init('tblDeposit')->selectWith($select)->current();
+		
+		return (array) $rowset;
 	}
 	
 	function isBlocked($name)

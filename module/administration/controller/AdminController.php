@@ -6,6 +6,7 @@ use Administration\Model\User;
 use Administration\Model\Group;
 use Administration\Model\MenuBar;
 use Administration\Model\UserLog;
+use Administration\Model\Rules;
 
 class AdminController extends ParentController
 {
@@ -20,6 +21,7 @@ class AdminController extends ParentController
 		$group = new Group();
 		$menuBar = new MenuBar();
 		$userLog = new userLog();
+		$rules = new Rules();
 		$request = $this->getRequest();
 		
 		if ((!empty($this->session->temp_username)) or (!empty($this->session->temp_password))) {
@@ -45,25 +47,14 @@ class AdminController extends ParentController
 				$http_referer = $_SERVER['HTTP_REFERER'];
 				$domain_array_temp = explode( "/", $http_referer);
 				$this->session->url_logout = $domain_array_temp[0] . "//" . $domain_array_temp[2];
-				$this->printResponse('inuse', 'Your login name is inuse !!!', array('flag'=>'alert', 'alert'=>'nama login terpakai !!!'));
+				$this->printResponse('inuse', 'Your login name is inuse !!!', array('flag' => 'alert', 'alert' => 'nama login terpakai !!!'));
 			//} else if ($ritsapi && !$allow_multiple_login) {
 			} else {
-				if ((DATABASE == 'klikmbc')&& ($_SERVER["REMOTE_ADDR"] != '116.90.165.214')) {
-					//jika berhasil login user_captcha dibuat 0
-					$user->updateUserCaptcha($post['user'],0);
-				}
-				
 				$temp = NULL;
 				$row = $user->getRow($user_id);
 				//pengecekan kelengkapan email dan no tlp
 				$user_contact = $user->getContact($user_id);
 				$user_phone = $user->getPhone($user_id);
-				$is_not_complete_contact = false;
-				if (($user_contact['contact_detail'] == null) || ($user_phone[0]['phone_number'])==null) {
-					$is_not_complete_contact = true;
-					$this->session->is_not_complete_contact = true;
-				}
-				
 				$group_id = $row['group_id'];
 				if ($row['user_master'] > 0) {
 					$this->session->downline = true;
@@ -77,25 +68,6 @@ class AdminController extends ParentController
 				$this->session->user_email = $user->getEmail($user_id);
 				$this->session->style = $row['user_style'];
 				$this->session->password_attempt = 0;
-				$defaultstyle_list = $style->getListDefault();
-				$array_style_list = unserialize($defaultstyle_list[0]['defaultstyle_choice']);
-				if (!(in_array($this->session->style, $array_style_list))) {
-					$data_style = array(
-						'user_style' => $defaultstyle_list[0]['defaultstyle_code'],
-					);
-					$user->update($this->session->user_id, $data_style);
-					$userLog->add($this->session->user_id, ' Style changed to '. $defaultstyle_list[0]['defaultstyle_code'].' CSS (Style '.$this->session->style.' deleted)');
-					$this->session->style = $defaultstyle_list[0]['defaultstyle_code'];
-				}
-				$array_style = $style->getList();
-				foreach ($array_style as $key => $value) {
-					foreach ($array_style_list as $k => $v) {
-						if ($value['style_code'] == $v) {
-							$style_list[$value['style_code']] = $value['style_name'];
-						}
-					}
-				}
-				$this->session->style_list = $style_list;
 				$rules_list = $rules->getList();
 				foreach ($rules_list as $row_rules) {
 					$temp[$row_rules['rules_code']]['rules_value'] = $row_rules['rules_value'];
@@ -111,27 +83,6 @@ class AdminController extends ParentController
 				$this->session->menu = $menuBar->MenuBar($menu);
 				$user->update($user_id, array('user_login' => time(), 'login_attempt' => 0,));
 				$userLog->add($user_id, 'Log in');
-				if ($row['password_attempt'] < 0) {
-					$this->session->password_attempt = -1;
-					$user->clearPasswordAttempt($user_id, '-1');
-					$this->session->referer = $this->view->referer = array(
-						'controller' => 'user', 'action' => 'changepassword',
-					);
-				} else if ($is_not_complete_contact) {
-					$this->session->referer = $this->view->referer = array(
-						'controller' => 'user', 'action' => 'profile',
-					);
-					$user->clearPasswordAttempt($user_id);
-				} else {
-					$is_passcriteria = true;
-					$is_passcriteria = $user->isPassInCriteria($post['password']);
-					if (!$is_passcriteria) {
-						$this->session->password_attempt = -1;
-						$user->clearPasswordAttempt($user_id, '-1');
-					} else if ($row['password_attempt'] != 0) {
-						$user->clearPasswordAttempt($user_id);
-					}
-				}
 				//INCLUDE PHP SESSION
 				$user->update($user_id, array( 'user_session' => $this->getSessCookie() ) );
 				// get origin domain from access by $http_referer, example 'http://phptester.net'

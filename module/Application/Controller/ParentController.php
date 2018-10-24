@@ -450,4 +450,12 @@ try {
 		echo json_encode($response);
 		exit();
 	}
+	
+	function getSessCookie()
+	{
+		$http_cookie = stristr($_SERVER['HTTP_COOKIE'], 'PHPSESSID');
+		$http_cookie_exp = explode('=', $http_cookie);
+		if (empty($http_cookie_exp[1])) return NULL;
+		return 'sess_' . $http_cookie_exp[1];
+	}
 }
