@@ -5,6 +5,7 @@ use Application\Controller\ParentController;
 use Administration\Model\User;
 use Administration\Model\Group;
 use Administration\Model\MenuBar;
+use Administration\Model\UserLog;
 
 class AdminController extends ParentController
 {
@@ -18,7 +19,30 @@ class AdminController extends ParentController
 		$user = new User();
 		$group = new Group();
 		$menuBar = new MenuBar();
-		$user_id = 1;
+		$userLog = new userLog();
+		$user->isBlocked($post['user']);
+		
+		if ((!empty($this->session->temp_username)) or (!empty($this->session->temp_password))) {// username dan password menggunakan session jika pakai captcha
+			$post = array(
+				'user' => $this->session->temp_username,
+				'password' => $this->session->temp_password,
+			);
+			unset($this->session->temp_userneme);
+			unset($this->session->temp_password);
+		} else {
+			$post = array(
+				'user' => $request->getPost('user'),
+				'password' => $request->getPost('password'),
+			);
+		}
+		$user_id = $user->getId($post['user']);
+		
+		if ($user->isUserPassword($post['user'], $post['password']) || (DATABASE=='versa' && $user->isUserPassword($post['user'], $post['password'], 'C'))) {
+		//} else if ($user->isNoUserInDatabase()) {
+		} else if ($user->isBlocked($post['user'])) {
+		} else if (!$user_id) {
+		} else {
+		}
 		
 		$row = $user->getRow($user_id);
 		$group_id = $row['group_id'];
@@ -94,8 +118,10 @@ class AdminController extends ParentController
 	public function logoutAction()
 	{
 		$user = new User();
+		$userLog = new userLog();
 		if (!empty($this->session->user_id)) {
 			$user->updateLifeTime($this->session->user_id, time());
+			$userLog->add($this->session->user_id, 'Log out');
 		}
 		$this->destroyRole();
 		echo 'anda sudah logout ganteng'; exit();

@@ -26,7 +26,6 @@ class User extends Versa_Gateway_Adapter
 		
 		$select = $this->select()->from('tblUser')->where(['user_id' => $id]);
 		//echo $select->getSqlString();
-		
 		$rowset = $this->init('tblUser')->selectWith($select);
 		$row = $rowset->current();
 		if (! $row) {
@@ -37,6 +36,14 @@ class User extends Versa_Gateway_Adapter
 		}
 
 		return $row;
+	}
+	
+	function getId($name, $user_status='A')
+	{
+		$select = $this->select()->from('tblUser')->where(['user_name' => ucwords(strtolower($name)), 'user_status' => $user_status]);
+		$rowset = $this->init('tblUser')->selectWith($select)->current();
+		
+		return $rowset->user_id;
 	}
 	
 	public function getList($page = NULL, $max_page = 10)
@@ -90,6 +97,18 @@ class User extends Versa_Gateway_Adapter
 		$rowset = $this->init('tblDeposit')->selectWith($select)->current();
 		
 		return $rowset->deposit_value;
+	}
+	
+	function isBlocked($name)
+	{
+		$select = $this->select();
+		$select->from('tblUser')
+			->where( ['user_name' => ucwords($name)] )
+			->where( [$this->where()->equalTo('user_status', 'I')->OR->equalTo('user_status', 'B')] );
+		//echo $select->getSqlString();
+		$rowset = $this->init('tblDeposit')->selectWith($select)->current();
+		
+		return strtolower($rowset->user_name) == strtolower($name);
 	}
 	
 	function updateLifeTime($id, $time) 
