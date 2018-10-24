@@ -43,9 +43,18 @@ class AdminController extends ParentController
 		} else if ($user->isBlocked($post['user'])) {
 			$agent_client = 'kami';
 			$userLog->add($user_id, $post['user'] . ' Block user try login.');
-			$this->printResponse('failed', 'Login ID anda terblokir, harap hubungi customer service ' . $agent_client . ' segera !!!', array('flag'=>'alert', 'alert'=>'Login ID anda terblokir, harap hubungi customer service'));
+			$this->printResponse('failed', 'Login ID anda terblokir, harap hubungi customer service ' . $agent_client . ' segera !!!', array('flag' => 'alert', 'alert' => 'Login ID anda terblokir, harap hubungi customer service'));
 		} else if (!$user_id) {
+			$userLog->add(NULL, $post['user'].' try login.');
+			$this->printResponse('failed', 'Username atau Password Anda salah !!!', array('flag' => 'alert', 'alert' => 'Username atau Password Anda salah !!!'));
 		} else {
+			if (!empty($user_id)) {
+				$userLog->add($user_id, 'Try Log in wrong password');
+				$user->incPasswordAttempt($user_id);
+			} else {
+				$userLog->add(NULL, 'Unknown user try login.');
+			}
+			$this->printResponse('failed', 'Username or Password not match', array('flag' => 'alert', 'alert' => 'username atau password salah'));
 		}
 		
 		$row = $user->getRow($user_id);

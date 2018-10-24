@@ -119,7 +119,10 @@ class User extends Versa_Gateway_Adapter
 		//echo $select->getSqlString();
 		$rowset = $this->init('tblDeposit')->selectWith($select)->current();
 		
-		return strtolower($rowset->user_name) == strtolower($name);
+		$user_name = (!empty($rowset->user_name)) ? $rowset->user_name : NULL;
+		if (empty($user_name)) return $user_name;
+		
+		return strtolower($user_name) == strtolower($name);
 	}
 	
 	function updateLifeTime($id, $time) 
@@ -128,5 +131,29 @@ class User extends Versa_Gateway_Adapter
 		$data['user_lifetime'] = $time;
 		
 		$this->update($id, $data);
+	}
+	
+	function incPasswordAttempt($id)
+	{
+		$select = $this->select()->from('tblUser')->where(['user_id' => $id]);
+		$rowset = $this->init('tblUser')->selectWith($select)->current();
+		
+		$password_attempt = $rowset->password_attempt;
+		$user_status = NULL;
+		if (($rowset->password_attempt < 0) && ($rowset->password_attempt >= -10)) {
+			$password_attempt--;
+		} else if (($rowset->password_attempt >= 0) && ($rowset->password_attempt <= 9)) {
+			$password_attempt++;
+		} else {
+			$password_attempt = 10;
+			$user_status = 'B';
+		}
+		
+		$data = array();
+		$data['password_attempt'] = $password_attempt;
+		if (!empty($user_status)) $data['user_status'] = $user_status;
+		$this->init('tblUser')->update($data, ['user_id' => $id]);
+		
+		return false;
 	}
 }
