@@ -20,9 +20,9 @@ class AdminController extends ParentController
 		$group = new Group();
 		$menuBar = new MenuBar();
 		$userLog = new userLog();
-		$user->isBlocked($post['user']);
+		$request = $this->getRequest();
 		
-		if ((!empty($this->session->temp_username)) or (!empty($this->session->temp_password))) {// username dan password menggunakan session jika pakai captcha
+		if ((!empty($this->session->temp_username)) or (!empty($this->session->temp_password))) {
 			$post = array(
 				'user' => $this->session->temp_username,
 				'password' => $this->session->temp_password,
@@ -35,11 +35,15 @@ class AdminController extends ParentController
 				'password' => $request->getPost('password'),
 			);
 		}
+		
 		$user_id = $user->getId($post['user']);
 		
-		if ($user->isUserPassword($post['user'], $post['password']) || (DATABASE=='versa' && $user->isUserPassword($post['user'], $post['password'], 'C'))) {
+		if ( $user->isUserPassword($post['user'], $post['password']) ) {
 		//} else if ($user->isNoUserInDatabase()) {
 		} else if ($user->isBlocked($post['user'])) {
+			$agent_client = 'kami';
+			$userLog->add($user_id, $post['user'] . ' Block user try login.');
+			$this->printResponse('failed', 'Login ID anda terblokir, harap hubungi customer service ' . $agent_client . ' segera !!!', array('flag'=>'alert', 'alert'=>'Login ID anda terblokir, harap hubungi customer service'));
 		} else if (!$user_id) {
 		} else {
 		}

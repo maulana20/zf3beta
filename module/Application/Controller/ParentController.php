@@ -15,6 +15,7 @@ define('MAX_PAGE', 10);
 define('EXPIRED', 900);
 define('VERSION', '1.0');
 
+define('AGENT_CLIENT', 'demo');
 define('URL_LOGIN', 'http://atris.vpstiket.com');
 define('TRAVEL_NAME', 98);
 define('TITLE_SITE', 'VAS');

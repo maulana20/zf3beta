@@ -2,6 +2,7 @@
 namespace Administration\Model;
 
 use Application\Model\Versa_Gateway_Adapter;
+use Administration\Model\Password;
 
 class User extends Versa_Gateway_Adapter
 {
@@ -38,12 +39,22 @@ class User extends Versa_Gateway_Adapter
 		return $row;
 	}
 	
-	function getId($name, $user_status='A')
+	function getId($name, $user_status = 'A')
 	{
 		$select = $this->select()->from('tblUser')->where(['user_name' => ucwords(strtolower($name)), 'user_status' => $user_status]);
 		$rowset = $this->init('tblUser')->selectWith($select)->current();
 		
-		return $rowset->user_id;
+		return (!empty($rowset->user_id)) ? $rowset->user_id : NULL;
+	}
+	
+	function isUserPassword($name, $password, $user_status = 'A')
+	{
+		$pass = new Password();
+		$select = $this->select()->columns(array('count' => $this->expression('COUNT(*)')))->from('tblUser')->where(['user_name' => ucwords(strtolower($name)), 'password' =>  $pass->encode($password), 'user_status' => $user_status]);
+		//echo $select->getSqlString(); exit();
+		$rowset = $this->init('tblUser')->selectWith($select)->current();
+		
+		return ($rowset->count > 0);
 	}
 	
 	public function getList($page = NULL, $max_page = 10)
