@@ -15,6 +15,16 @@ class Module implements ConfigProviderInterface
 		return [
 			'router' => [
 				'routes' => [
+					'admin' => [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => '/admin[/:action][/:id]',
+							'defaults' => [
+								'controller' => Controller\AdminController::class,
+								'action'     => 'index',
+							],
+						],
+					],
 					'user' => [
 						'type'    => Segment::class,
 						'options' => [
@@ -29,6 +39,7 @@ class Module implements ConfigProviderInterface
 			],
 			'controllers' => [
 				'factories' => [
+					Controller\AdminController::class => InvokableFactory::class,
 					Controller\UserController::class => InvokableFactory::class,
 				],
 			],

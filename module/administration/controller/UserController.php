@@ -8,6 +8,9 @@ class UserController extends ParentController
 {
 	public function indexAction()
 	{
+		$this->checkRole('ADMINISTRATION');
+		$this->checkRole('USER');
+		
 		$user = new User();
 		$page = (int) $this->params()->fromQuery('page', 1);
 		$page = ($page < 1) ? 1 : $page;
@@ -18,6 +21,9 @@ class UserController extends ParentController
 	
 	public function addAction()
 	{
+		$this->checkpopRole('ADD_USER');
+		$this->checkpopRole('USER');
+		
 		$request = $this->getRequest();
 		$user = new User();
 		
@@ -31,6 +37,8 @@ class UserController extends ParentController
 	
 	public function deleteAction()
 	{
+		$this->checkRole('DELETE_USER');
+		$this->checkRole('USER');
 		$request = $this->getRequest();
 		$user = new User();
 		
@@ -53,6 +61,9 @@ class UserController extends ParentController
 	
 	public function editAction()
 	{
+		$this->checkRole('EDIT_USER');
+		$this->checkRole('USER');
+		
 		$request = $this->getRequest();
 		$user = new User();
 		
@@ -68,6 +79,9 @@ class UserController extends ParentController
 	
 	public function activeAction()
 	{
+		$this->checkRole('AI_USER');
+		$this->checkRole('USER');
+		
 		$request = $this->getRequest();
 		$user = new User();
 		
@@ -86,6 +100,9 @@ class UserController extends ParentController
 	
 	public function inactiveAction()
 	{
+		$this->checkRole('AI_USER');
+		$this->checkRole('USER');
+		
 		$request = $this->getRequest();
 		$user = new User();
 		

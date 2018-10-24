@@ -47,8 +47,6 @@ try {
 		$this->view = new ViewModel();
 		$this->session = new Container('namespace');
 		
-		$this->session->user_id = 1;
-		
 		if ($this->session->user_id == 1) {
 			$this->session->setExpirationSeconds(1800);
 		} else {
@@ -83,6 +81,7 @@ try {
 				$user->updateLifeTime($this->session->user_id, time());
 			}
 			$this->destroyRole();
+			echo 'gak ada access check role woyy !!'; exit();
 			//$this->_transfer('default', 'admin', 'noaccess');
 		}
 	}
@@ -95,6 +94,7 @@ try {
 				$user->updateLifeTime($this->session->user_id, time());
 			}
 			$this->destroyRole();
+			echo 'gak ada access check pop role woyy !!'; exit();
 			//$this->_transfer('default', 'admin', 'nopopup');
 		}
 	}
@@ -116,7 +116,7 @@ try {
 		$access_all = $group->getAccessAll();
 		
 		foreach ($access_all as $a) {
-			$acl->addRole(new Zend_Acl_Role($a));
+			$acl->addRole(new Role($a));
 		}
 		foreach ($allow as $a) {
 			$acl->allow($a);
