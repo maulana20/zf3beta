@@ -76,7 +76,7 @@ class AdminController extends ParentController
 	function ajaxresetloginAction()
 	{
 		$user = new User();
-		//$userLog = new userLogModel();
+		$userLog = new userLog();
 		$request = $this->getRequest();
 		
 		$is_agree = $request->getPost('is_agree', 0);
