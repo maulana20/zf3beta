@@ -133,6 +133,15 @@ class User extends Versa_Gateway_Adapter
 		$this->update($id, $data);
 	}
 	
+	function isOnLogin($id)
+	{
+		if (empty($id)) return false;
+		$select = $this->select()->from('tblUser')->where(['user_id' => $id]);
+		$rowset = $this->init('tblUser')->selectWith($select)->current();
+		
+		return ($rowset->user_lifetime > time());
+	}
+	
 	function incPasswordAttempt($id)
 	{
 		$select = $this->select()->from('tblUser')->where(['user_id' => $id]);
