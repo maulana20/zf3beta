@@ -2,10 +2,10 @@
 include_once realpath ('../../') . "/Startup.php";
 use Application\Model\Versa_Gateway_Adapter;
 
-$access = 'ADMINISTRATION USER ADD_USER EDIT_USER AI_USER DELETE_USER INFO_USER RESET_PASSWORD USER_LOG';
+$access = 'ADMINISTRATION USER ADD_USER EDIT_USER AI_USER DELETE_USER INFO_USER RESET_PASSWORD USER_LOG SUPER_USER';
 $access_list = explode(' ', $access);
 
-Versa_Gateway_Adapter::init('tblGroup')->update(['group_access' => serialize($access_list)], ['group_id' => 11]);
+Versa_Gateway_Adapter::init('tblGroup')->update(['group_access' => serialize($access_list)], ['group_id' => 1]);
 
 foreach ($access_list as $value) {
 	Versa_Gateway_Adapter::init('tblProfile')->insert(array('profile_code' => $value));
