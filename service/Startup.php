@@ -23,3 +23,4 @@ if (! class_exists(Application::class)) {
         . "- Type `docker-compose run zf composer install` if you are using Docker.\n"
     );
 }
+
