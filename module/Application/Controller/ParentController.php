@@ -16,10 +16,10 @@ define('EXPIRED', 900);
 define('VERSION', '1.0');
 
 define('AGENT_CLIENT', 'demo');
-define('URL_LOGIN', 'http://atris.vpstiket.com');
-define('TRAVEL_NAME', 98);
+define('URL_LOGIN', 'http://localhost:8080');
+define('TRAVEL_NAME', 1);
 define('TITLE_SITE', 'VAS');
-define('DOMAIN_AVAILABLE', 'http://client.vpstiket.com~http://m-atris.vpstiket.com');
+define('DOMAIN_AVAILABLE', 'http://localhost:8080~http://http://m-localhost:8080');
 
 class ParentController extends AbstractActionController
 {
