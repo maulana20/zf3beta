@@ -19,6 +19,52 @@ class UserController extends ParentController
 		return new $this->view(['list' => $user_list]);
 	}
 	
+	public function listAction()
+	{
+		$user_id = $this->session->user_id;
+		$super_user = $this->isInRole('SUPER_USER');
+		$this->checkRole('ADMINISTRATION');
+		$this->checkRole('USER');
+		
+		$user = new User();
+		$page = (int) $this->params()->fromQuery('page', 1);
+		$page = ($page < 1) ? 1 : $page;
+		$list = $user->getList($page, MAX_PAGE);
+		$current_row = $user->getRow($user_id);
+		
+		$navigation = array();
+		$navigation['in_inactive'] = true;
+		$navigation['is_active'] = true;
+		$navigation['is_delete'] = true;
+		$navigation['is_deposit'] = false;
+		$navigation['is_down'] = true;
+		$navigation['is_up'] = true;
+		
+		$content = array();
+		$content['page'] = $page;
+		$content['navigation'] = $navigation;
+		$content['ns_access_ai'] = 1;
+		$content['current_row'] = $current_row;
+		$content['distributor'] = $list[0]['group_name'];
+		$content['caption'] = 'USER LIST';
+		$content['page_list'] = NULL;
+		// buang password
+		for($x = 0; $x < count($list); $x++){
+			unset($list[$x]['password']);
+		}
+		$content['list'] = $list;
+		$content['UA'] = ($this->isInRole('ADD_USER') == true ? 84 : 70);
+		$content['UE'] = ($this->isInRole('EDIT_USER') == true ? 84 : 70);
+		$content['UY'] = ($this->isInRole('DELETE_USER') == true ? 84 : 70);
+		$content['UX'] = ($this->isInRole('AI_USER') == true ? 84 : 70);
+		$content['UI'] = ($this->isInRole('INFO_USER') == true ? 84 : 70);
+		$content['UZ'] = 70;
+		$content['super_user'] = $this->isInRole('SUPER_USER');
+		$content['user_id'] = $this->session->user_id;
+		$content['back'] = array('controller' => 'home', 'action' => 'newsagent' , 'module' => 'default');
+		$this->printResponse('success', 'ambil data', $content);
+	}
+	
 	public function addAction()
 	{
 		$this->checkpopRole('ADD_USER');

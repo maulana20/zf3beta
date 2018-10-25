@@ -59,6 +59,7 @@ class User extends Versa_Gateway_Adapter
 	
 	public function getList($page = NULL, $max_page = 10)
 	{
+		$result = NULL;
 		if (empty($page)) return $this->init('tblUser')->select();
 		
 		$select = $this->select();
@@ -70,7 +71,12 @@ class User extends Versa_Gateway_Adapter
 				->order('a.user_name DESC');
 		//echo $select->getSqlString(); exit();
 		
-		return $this->paginator($select, $page, $max_page);
+		$pagination = $this->paginator($select, $page, $max_page);
+		foreach ($pagination as $value) {
+			$result[] = (array) $value;
+		}
+		
+		return $result;
 	}
 	
 	public function getRow($id)
