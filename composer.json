@@ -27,7 +27,9 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/application/",
-            "Administration\\": "module/administration/"
+            "Administration\\": "module/administration/",
+            "Accounting\\": "module/accounting/",
+            "Finance\\": "module/finance/"
         }
     },
     "autoload-dev": {

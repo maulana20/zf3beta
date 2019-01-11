@@ -11,7 +11,7 @@ use Zend\Permissions\Acl\Role\GenericRole as Role;
 use Administration\Model\Group;
 use Administration\Model\User;
 
-define('MAX_PAGE', 10);
+define('MAX_PAGE', 25);
 define('EXPIRED', 900);
 define('VERSION', '1.0');
 
@@ -20,6 +20,7 @@ define('URL_LOGIN', 'http://localhost:8080');
 define('TRAVEL_NAME', 1);
 define('TITLE_SITE', 'VAS');
 define('DOMAIN_AVAILABLE', 'http://localhost:8080~http://http://m-localhost:8080');
+date_default_timezone_set("Asia/Bangkok");
 
 class ParentController extends AbstractActionController
 {
@@ -27,7 +28,26 @@ class ParentController extends AbstractActionController
 	public $view = NULL;
 	public $menu = array(
 		array('caption' => 'Administration', 'href' => '#', 'access' => 'ADMINISTRATION', 'node' => array(
-				array('caption' => 'User List', 'href' => '#', 'onclick' => '', 'access' => 'USER'),
+				array('caption' => 'User', 'href' => '#', 'onclick' => '', 'access' => 'USER'),
+				array('caption' => 'Group', 'href' => '#', 'onclick' => '', 'access' => 'GROUP'),
+				array('caption' => 'Show User Log', 'href' => '#', 'onclick' => '', 'access' => 'USER_LOG'),
+			),
+		),
+		array('caption' => 'Operational', 'href' => '#', 'access' => 'OPERATIONAL'),
+		array('caption' => 'Accounting', 'href' => '#', 'access' => 'ACCOUNTING', 'node' => array(
+				array('caption' => 'COA', 'href' => '#', 'onclick' => '', 'access' => 'COA'),
+				array('caption' => 'Journal', 'href' => '#', 'onclick' => '', 'access' => 'JOURNAL'),
+				array('caption' => 'General Ledger', 'href' => '#', 'onclick' => '', 'access' => 'GENERALLEDGER'),
+				array('caption' => 'Trial Balance', 'href' => '#', 'onclick' => '', 'access' => 'TRIALBALANCE'),
+				array('caption' => 'Balance Sheet', 'href' => '#', 'onclick' => '', 'access' => 'BALANCESHEET'),
+				array('caption' => 'Period', 'href' => '#', 'onclick' => '', 'access' => 'PERIOD'),
+				array('caption' => 'Posting', 'href' => '#', 'onclick' => '', 'access' => 'POSTING'),
+				array('caption' => 'Closing', 'href' => '#', 'onclick' => '', 'access' => 'CLOSING'),
+			),
+		),
+		array('caption' => 'Finance', 'href' => '#', 'access' => 'FINANCE', 'node' => array(
+				array('caption' => 'General Cash Bank', 'href' => '#', 'onclick' => '', 'access' => 'GENERALCASHBANK'),
+				array('caption' => 'Inter Cash Bank', 'href' => '#', 'onclick' => '', 'access' => 'INTERCASHBANK'),
 			),
 		),
 	);
@@ -99,9 +119,8 @@ try {
 			$this->session->acl = serialize($acl);
 		} else {
 			$user = new User();
-			if ($this->getEvent()->getRouteMatch()->getMatchedRouteName() != 'admin') {
-				$user->updateLifeTime($this->session->user_id, time()+ EXPIRED);
-			}
+			if ($this->getEvent()->getRouteMatch()->getMatchedRouteName() != 'admin') $user->updateLifeTime($this->session->user_id, time()+ EXPIRED);
+			if ( !empty($this->session->user_name) ) $user->update($this->session->user_id, array( 'user_session' => $this->getSessCookie() ) );
 		}
 } catch (Exception $e) {
 	echo $e->getMessage();
@@ -117,8 +136,8 @@ try {
 				$user->updateLifeTime($this->session->user_id, time());
 			}
 			$this->destroyRole();
-			echo 'gak ada access check role woyy !!'; exit();
-			//$this->_transfer('default', 'admin', 'noaccess');
+			$this->printResponse('timeout', 'failed checkpopRole ', array('flag'=>'timeout', 'alert'=>'Anda tidak memiliki access, harap hubungi vendor anda !'));
+			exit();
 		}
 	}
 	
@@ -174,11 +193,42 @@ try {
 		exit();
 	}
 	
+	public function reasonNoAccess()
+	{
+		$this->destroyRole();
+		$this->printResponse('failed', 'not have access', array('flag'=>'alert', 'alert'=>'Anda tidak memiliki access , harap hubungi vendor anda !'));
+	}
+	
+	public function NoAccessAllowed()
+	{
+		$result = array(
+			'result' => 'error',
+			'reason' => 'Error Code 25, Please contact Vendor!',
+		);
+		return $result;
+	}
+	
+	public function getLookupList($list, $key, $val)
+	{
+		$result = NULL;
+		$count = count($list);
+		for($i = 0; $i < $count; $i++) {
+			$result[$list[$i][$key]] = $list[$i][$val];
+		}
+		return $result;
+	}
+	
 	function getSessCookie()
 	{
 		$http_cookie = stristr($_SERVER['HTTP_COOKIE'], 'PHPSESSID');
 		$http_cookie_exp = explode('=', $http_cookie);
+		$session_cookie = 'sess_';
 		if (empty($http_cookie_exp[1])) return NULL;
-		return 'sess_' . $http_cookie_exp[1];
+		if (stristr($http_cookie_exp[1], ';')) {
+			$cookie_temp = explode(';', $http_cookie);
+			return $session_cookie .= $cookie_temp[0];
+		} else {
+			return $session_cookie .= $http_cookie_exp[1];
+		}
 	}
 }

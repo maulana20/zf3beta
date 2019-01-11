@@ -23,5 +23,7 @@ return [
 	'Zend\Router',
 	'Zend\Validator',
 	'application',
-	'administration'
+	'administration',
+	'accounting',
+	'finance'
 ];

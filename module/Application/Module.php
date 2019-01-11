@@ -15,7 +15,7 @@ class Module implements ConfigProviderInterface
 		return [
 			'router' => [
 				'routes' => [
-					'home' => [
+					'index' => [
 						'type' => Literal::class,
 						'options' => [
 							'route'    => '/',
@@ -25,12 +25,12 @@ class Module implements ConfigProviderInterface
 							],
 						],
 					],
-					'application' => [
+					'home' => [
 						'type'    => Segment::class,
 						'options' => [
-							'route'    => '/application[/:action]',
+							'route'    => '/home[/:action]',
 							'defaults' => [
-								'controller' => Controller\IndexController::class,
+								'controller' => Controller\HomeController::class,
 								'action'     => 'index',
 							],
 						],
@@ -82,6 +82,7 @@ class Module implements ConfigProviderInterface
 			'controllers' => [
 				'factories' => [
 					Controller\IndexController::class => InvokableFactory::class,
+					Controller\HomeController::class => InvokableFactory::class,
 					//Controller\AlbumController::class => Controller\Factory\AlbumControllerFactory::class,
 					//Controller\ListController::class => Controller\Factory\ListControllerFactory::class,
 					//Controller\MahasiswaController::class => InvokableFactory::class,
@@ -118,7 +119,7 @@ class Module implements ConfigProviderInterface
 						'label' => 'Home',
 						'route' => 'home',
 					],
-					[
+					/*[
 						'label' => 'User',
 						'route' => 'user',
 						'pages' => [
@@ -138,7 +139,7 @@ class Module implements ConfigProviderInterface
 								'action' => 'delete',
 							],
 						],
-					],
+					],*/
 				],
 			],
 			'db' => [

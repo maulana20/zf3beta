@@ -1,5 +1,5 @@
 <?php
-namespace Administration;
+namespace Finance;
 
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Router\Http\Literal;
@@ -15,54 +15,32 @@ class Module implements ConfigProviderInterface
 		return [
 			'router' => [
 				'routes' => [
-					'admin' => [
+					'generalcashbank' => [
 						'type'    => Segment::class,
 						'options' => [
-							'route'    => '/admin[/:action][/:id]',
+							'route'    => '/generalcashbank[/:action][/:id]',
 							'defaults' => [
-								'controller' => Controller\AdminController::class,
+								'controller' => Controller\GeneralCashBankController::class,
 								'action'     => 'index',
 							],
 						],
 					],
-					'user' => [
+					'intercashbank' => [
 						'type'    => Segment::class,
 						'options' => [
-							'route'    => '/user[/:action][/:id]',
+							'route'    => '/intercashbank[/:action][/:id]',
 							'defaults' => [
-								'controller' => Controller\UserController::class,
+								'controller' => Controller\InterCashBankController::class,
 								'action'     => 'index',
 							],
 						],
-					],
-					'group' => [
-						'type'    => Segment::class,
-						'options' => [
-							'route'    => '/group[/:action][/:id]',
-							'defaults' => [
-								'controller' => Controller\GroupController::class,
-								'action'     => 'index',
-							],
-						],
-					],
-					'userlog' => [
-						'type'    => Segment::class,
-						'options' => [
-							'route'    => '/userlog[/:action][/:id]',
-							'defaults' => [
-								'controller' => Controller\UserLogController::class,
-								'action'     => 'index',
-							],
-						],
-					],
+					]
 				],
 			],
 			'controllers' => [
 				'factories' => [
-					Controller\AdminController::class => InvokableFactory::class,
-					Controller\UserController::class => InvokableFactory::class,
-					Controller\GroupController::class => InvokableFactory::class,
-					Controller\UserLogController::class => InvokableFactory::class,
+					Controller\GeneralCashBankController::class => InvokableFactory::class,
+					Controller\InterCashBankController::class => InvokableFactory::class
 				],
 			],
 			'service_manager' => [

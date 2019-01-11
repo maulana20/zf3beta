@@ -1,0 +1,79 @@
+USE demo
+
+SELECT b.coa_from, d.coa_name, a.period_begin, c.period_status, a.financialtrans_date, b.glanalysis_desc,
+SUM(CASE WHEN b.glanalysis_position = 'D' THEN
+       b.glanalysis_value
+    ELSE
+       0
+    END) AS glanalysis_debet,
+SUM(CASE WHEN b.glanalysis_position = 'C' THEN
+       b.glanalysis_value
+    ELSE
+       0
+    END) AS glanalysis_credit
+FROM tblFinancialTrans AS a
+LEFT JOIN tblGlAnalysis AS b ON a.financialtrans_id=b.financialtrans_id
+LEFT JOIN tblPeriod AS c ON a.period_begin=c.period_begin
+LEFT JOIN tblCoa AS d ON b.coa_from=d.coa_code
+WHERE a.financialtrans_id = 1
+GROUP BY b.coa_from, d.coa_name, a.period_begin, c.period_status, a.financialtrans_date, b.glanalysis_desc, b.glanalysis_position
+ORDER BY glanalysis_debet DESC
+GO
+
+SELECT b.coa_from, d.coa_name, a.period_begin, c.period_status, a.financialtrans_date, b.glanalysis_desc,
+SUM(CASE WHEN b.glanalysis_position = 'D' THEN
+       b.glanalysis_value
+    ELSE
+       0
+    END) AS glanalysis_debet,
+SUM(CASE WHEN b.glanalysis_position = 'C' THEN
+       b.glanalysis_value
+    ELSE
+       0
+    END) AS glanalysis_credit
+FROM tblFinancialTrans AS a
+LEFT JOIN tblGlAnalysis AS b ON a.financialtrans_id=b.financialtrans_id
+LEFT JOIN tblPeriod AS c ON a.period_begin=c.period_begin
+LEFT JOIN tblCoa AS d ON b.coa_from=d.coa_code
+WHERE a.financialtrans_id = 2
+GROUP BY b.coa_from, d.coa_name, a.period_begin, c.period_status, a.financialtrans_date, b.glanalysis_desc, b.glanalysis_position
+ORDER BY glanalysis_debet DESC
+GO
+
+SELECT b.coa_to, b.coa_from, d.coa_name, a.period_begin, a.financialtrans_date, b.glanalysis_desc,
+(SELECT posting_balance FROM tblPosting as d WHERE d.coa_code=111101 AND d.period_begin=201810) as begining,
+(CASE WHEN b.glanalysis_position = 'C' THEN
+       b.glanalysis_value
+    ELSE
+       0
+    END) AS glanalysis_debet,
+(CASE WHEN b.glanalysis_position = 'D' THEN
+       b.glanalysis_value
+    ELSE
+       0
+    END) AS glanalysis_credit,
+(SELECT posting_balance FROM tblPosting as d WHERE d.coa_code=111101 AND d.period_begin=201810) + SUM(CASE WHEN b.glanalysis_position = 'C' THEN
+       b.glanalysis_value
+    ELSE
+       b.glanalysis_value * -1
+    END) OVER (PARTITION BY b.coa_to ORDER BY b.glanalysis_id) As ending
+FROM tblFinancialTrans AS a
+LEFT JOIN tblGlAnalysis AS b ON a.financialtrans_id=b.financialtrans_id
+LEFT JOIN tblPeriod AS c ON a.period_begin=c.period_begin
+LEFT JOIN tblCoa AS d ON b.coa_from=d.coa_code
+WHERE b.coa_to = 111101 AND a.period_begin='201811'
+GO
+
+SELECT a.groupaccount_id, a.groupaccount_name, b.coa_code, b.coa_name, a.groupaccount_parent,
+ISNULL((SELECT posting_balance FROM tblPosting as e WHERE e.coa_code=b.coa_code AND e.period_begin=201810), 0) + SUM(CASE WHEN c.glanalysis_position = 'C' THEN
+       c.glanalysis_value
+    ELSE
+       c.glanalysis_value * -1
+    END) AS balance_201811,
+ISNULL((SELECT posting_balance FROM tblPosting as e WHERE e.coa_code=b.coa_code AND e.period_begin=201810), 0) as begining_201810
+FROM tblGroupAccount as a
+LEFT JOIN tblCoa AS b ON a.groupaccount_id=b.groupaccount_id
+LEFT JOIN tblGlAnalysis AS c ON b.coa_code=c.coa_to
+LEFT JOIN tblFinancialTrans AS d ON c.financialtrans_id=d.financialtrans_id
+WHERE d.period_begin=201811
+GROUP BY a.groupaccount_id, a.groupaccount_name, b.coa_code, b.coa_name, a.groupaccount_parent

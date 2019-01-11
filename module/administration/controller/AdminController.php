@@ -10,202 +10,18 @@ use Administration\Model\Rules;
 
 class AdminController extends ParentController
 {
-	public function indexAction()
-	{
-		$this->loginAction();
-	}
-	
-	public function loginAction()
+	private function _forcelogin($user_id)
 	{
 		$user = new User();
-		$group = new Group();
-		$menuBar = new MenuBar();
-		$userLog = new userLog();
-		$rules = new Rules();
-		$request = $this->getRequest();
+		$userLog = new UserLog();
 		
-		if ((!empty($this->session->temp_username)) or (!empty($this->session->temp_password))) {
-			$post = array(
-				'user' => $this->session->temp_username,
-				'password' => $this->session->temp_password,
-			);
-			unset($this->session->temp_userneme);
-			unset($this->session->temp_password);
-		} else {
-			$post = array(
-				'user' => $request->getPost('user'),
-				'password' => $request->getPost('password'),
-			);
-		}
+		$user_row = $user->getRow($user_id);
+		if (empty($user_row['user_session'])) $this->printResponse('failed', 'Gagal mendapatkan session', 'Gagal mendapatkan session');
+		$user->updateLifeTime($user_id, time());
 		
-		$user_id = $user->getId($post['user']);
-		
-		if ( $user->isUserPassword($post['user'], $post['password']) ) {
-			if ($user->isOnLogin($user_id)) {
-				$userLog->add($user_id, $post['user'].' login inuse.');
-				$this->session->user_id = $user_id;
-				$http_referer = $_SERVER['HTTP_REFERER'];
-				$domain_array_temp = explode( "/", $http_referer);
-				$this->session->url_logout = $domain_array_temp[0] . "//" . $domain_array_temp[2];
-				$this->printResponse('inuse', 'Your login name is inuse !!!', array('flag' => 'alert', 'alert' => 'nama login terpakai !!!'));
-			//} else if ($ritsapi && !$allow_multiple_login) {
-			} else {
-				$temp = NULL;
-				$row = $user->getRow($user_id);
-				//pengecekan kelengkapan email dan no tlp
-				$user_contact = $user->getContact($user_id);
-				$user_phone = $user->getPhone($user_id);
-				$group_id = $row['group_id'];
-				if ($row['user_master'] > 0) {
-					$this->session->downline = true;
-				} else {
-					$this->session->downline = false;
-				}
-				$this->session->user_id = $user_id;
-				$this->session->user_name = $row['user_name'];
-				$this->session->user_trading = $row['user_trading_name'];
-				$this->session->group_id = $group_id;
-				$this->session->user_email = $user->getEmail($user_id);
-				$this->session->style = $row['user_style'];
-				$this->session->password_attempt = 0;
-				$rules_list = $rules->getList();
-				foreach ($rules_list as $row_rules) {
-					$temp[$row_rules['rules_code']]['rules_value'] = $row_rules['rules_value'];
-					$temp[$row_rules['rules_code']]['rules_status'] = $row_rules['rules_status'];
-				}
-				
-				$this->session->rules = $temp;
-				$this->session->baseurl = $request->getPost('baseurl');
-				$access = $group->getAccess($group_id);
-				$access = unserialize($access);
-				$this->setRole($access);
-				$menu = $this->getAccessMenu($this->menu);
-				$this->session->menu = $menuBar->MenuBar($menu);
-				$user->update($user_id, array('user_login' => time(), 'login_attempt' => 0,));
-				$userLog->add($user_id, 'Log in');
-				//INCLUDE PHP SESSION
-				$user->update($user_id, array( 'user_session' => $this->getSessCookie() ) );
-				// get origin domain from access by $http_referer, example 'http://phptester.net'
-				$http_referer = $_SERVER['HTTP_REFERER'];
-				$domain_array_temp = explode( "/", $http_referer);
-				$this->session->url_logout = $domain_array_temp[0] . "//" . $domain_array_temp[2];
-				$this->printResponse('success', 'login success', 'login success');
-			}
-		//} else if ($user->isNoUserInDatabase()) {
-		} else if ($user->isBlocked($post['user'])) {
-			$agent_client = 'kami';
-			$userLog->add($user_id, $post['user'] . ' Block user try login.');
-			$this->printResponse('failed', 'Login ID anda terblokir, harap hubungi customer service ' . $agent_client . ' segera !!!', array('flag' => 'alert', 'alert' => 'Login ID anda terblokir, harap hubungi customer service'));
-		} else if (!$user_id) {
-			$userLog->add(NULL, $post['user'].' try login.');
-			$this->printResponse('failed', 'Username atau Password Anda salah !!!', array('flag' => 'alert', 'alert' => 'Username atau Password Anda salah !!!'));
-		} else {
-			if (!empty($user_id)) {
-				$userLog->add($user_id, 'Try Log in wrong password');
-				$user->incPasswordAttempt($user_id);
-			} else {
-				$userLog->add(NULL, 'Unknown user try login.');
-			}
-			$this->printResponse('failed', 'Username or Password not match', array('flag' => 'alert', 'alert' => 'username atau password salah'));
-		}
-		
-		$row = $user->getRow($user_id);
-		$group_id = $row['group_id'];
-		$this->session->user_id = $user_id;
-		$this->session->user_name = $row['user_name'];
-		
-		$access = $group->getAccess($group_id);
-		$access = unserialize($access);
-		$this->setRole($access);
-		
-		$menu = $this->getAccessMenu($this->menu);
-		$this->session->menu = $menuBar->MenuBar($menu);
-		$user->update($user_id, array('user_login' => time(), 'login_attempt' => 0,));
-		
-		return $this->redirect()->toRoute('user', ['action' => 'index']);
-	}
-	
-	function ajaxresetloginAction()
-	{
-		$user = new User();
-		$userLog = new userLog();
-		$request = $this->getRequest();
-		
-		$is_agree = $request->getPost('is_agree', 0);
-		if (!$is_agree) {
-			$this->printResponse('failed', 'Silahkkan ceklist Setuju', 'Silahkkan ceklist Setuju');
-			exit();
-		}
-		$user_row = $user->getRow($this->session->user_id);
-		//$this->session->user_name = $user_row['user_name'];
-		if (empty($user_row['user_session'])) {
-			$this->printResponse('failed', 'Gagal mendapatkan session', 'Gagal mendapatkan session');
-			exit();
-		}
-		// UPDATE LIFETIME
-		if (! empty ( $this->session->user_id )) {
-			$user->updateLifeTime($this->session->user_id, time());
-			//$userLog->add($this->session->user_id, 'Log out');
-			//delete token
-			if ((DATABASE == 'klikmbc') || (DATABASE == 'demox')) {
-				if ($this->session->tokenExpired == 'onetime') {
-					$token = new TokenModel();
-					$token->delete($this->session->tokenId);
-				}
-			}
-		}
-		// DELETE SESSION PADA BROWSER SENDIRI
 		$userLog->add($this->session->user_id, 'force login');
-		$this->destroyRole();
-		// DELETE COOKIE PADA TEMP SESSION
+		//$this->destroyRole();
 		shell_exec('echo Y| DEL D:\\temp\\' . $user_row['user_session'] . ' /Q');
-		//sleep(2);
-		
-		$this->printResponse('success', 'Login berhasil', 'Login berhasil');
-		exit();
-	}
-	
-	function noaccessAction()
-	{
-		$this->printResponse('failed', 'SESSION TIMEOUT', array('flag'=>'alert', 'alert'=>'sesi habis'));
-	}
-	
-	function nopopupAction()
-	{
-		$this->printResponse('failed', 'SESSION TIMEOUT', array('flag'=>'alert', 'alert'=>'sesi habis'));
-	}
-	
-	function noactionAction()
-	{
-		$this->printResponse('failed', 'THIS PAGE UNDER CONSTRUCTION !!!', array('flag'=>'alert', 'alert'=>'halaman sedang dibuat'));
-	}
-	
-	public function logoutAction()
-	{
-		$user = new User();
-		$userLog = new userLog();
-		if (!empty($this->session->user_id)) {
-			$user->updateLifeTime($this->session->user_id, time());
-			$userLog->add($this->session->user_id, 'Log out');
-		}
-		$this->destroyRole();
-		echo 'anda sudah logout ganteng'; exit();
-	}
-	
-	function isonloginAction()
-	{
-		$user = new User();
-		$response['status'] = 'failed';
-		$response['message'] = 'Gagal Login';
-		$response['content'] = array('info' => NULL, 'url_login' => URL_LOGIN, 'url_logout' => $this->session->url_logout);
-		
-		if($this->session->user_name) {
-			$response['status'] = 'success';
-			$response['message'] = 'Berhasil login';
-			$response['content'] = array('info' => 'Berhasil', 'url_login' => URL_LOGIN, 'url_logout' => $this->session->url_logout);
-		}
-		echo json_encode($response);
-		exit();
 	}
 	
 	private function _getMenuCaption($access_menu)
@@ -234,6 +50,155 @@ class AdminController extends ParentController
 		return $result;
 	}
 	
+	public function indexAction()
+	{
+		$this->loginAction();
+	}
+	
+	public function loginAction()
+	{
+		$user = new User();
+		$group = new Group();
+		$menuBar = new MenuBar();
+		$userLog = new userLog();
+		$rules = new Rules();
+		$request = $this->getRequest();
+		
+		if ((!empty($this->session->temp_username)) or (!empty($this->session->temp_password))) {
+			$post = array(
+				'user' => $this->session->temp_username,
+				'password' => $this->session->temp_password,
+			);
+			unset($this->session->temp_userneme);
+			unset($this->session->temp_password);
+		} else {
+			$post = array(
+				'user' => $request->getPost('user'),
+				'password' => $request->getPost('password'),
+			);
+		}
+		
+		// CHECK FORCE LOGIN
+		$user_explode = explode('/', $post['user']);
+		$is_force = false;
+		if (count($user_explode) > 1 ) {
+			if ($user_explode[1] == 'force') $is_force = true;
+			$post['user'] = $user_explode[0];
+		}
+		
+		$user_id = $user->getId($post['user']);
+		
+		if ( $user->isUserPassword($post['user'], $post['password']) ) {
+			if ($is_force) $this->_forcelogin($user_id);
+			if ($user->isOnLogin($user_id)) {
+				$userLog->add($user_id, $post['user'].' login inuse.');
+				$this->session->user_id = $user_id;
+				$http_referer = $_SERVER['HTTP_REFERER'];
+				$domain_array_temp = explode( "/", $http_referer);
+				$this->session->url_logout = $domain_array_temp[0] . "//" . $domain_array_temp[2];
+				$this->printResponse('inuse', 'Your login name is inuse !!!', array('flag' => 'alert', 'alert' => 'nama login terpakai !!!'));
+			} else {
+				$temp = NULL;
+				$row = $user->getRow($user_id);
+				$group_id = $row['group_id'];
+				if ($row['user_master'] > 0) {
+					$this->session->downline = true;
+				} else {
+					$this->session->downline = false;
+				}
+				$this->session->user_id = $user_id;
+				$this->session->user_name = $row['user_name'];
+				$this->session->user_trading = $row['user_realname'];
+				$this->session->group_id = $group_id;
+				$this->session->user_email = NULL;
+				$this->session->style = NULL;
+				$this->session->password_attempt = 0;
+				$rules_list = $rules->getList();
+				/*foreach ($rules_list as $row_rules) {
+					$temp[$row_rules['rules_code']]['rules_value'] = $row_rules['rules_value'];
+					$temp[$row_rules['rules_code']]['rules_status'] = $row_rules['rules_status'];
+				}*/
+				
+				$this->session->rules = $temp;
+				$this->session->baseurl = $request->getPost('baseurl');
+				$access = $group->getAccess($group_id);
+				$access = unserialize($access);
+				$this->setRole($access);
+				$menu = $this->getAccessMenu($this->menu);
+				$this->session->menu = $menuBar->MenuBar($menu);
+				$user->update($user_id, array('user_login' => time(), 'login_attempt' => 0,));
+				$user->updateLifeTime($this->session->user_id, time()+ EXPIRED);
+				$user->update($user_id, array( 'user_session' => $this->getSessCookie() ) );
+				
+				$userLog->add($user_id, 'Log in');
+				
+				$http_referer = $_SERVER['HTTP_REFERER'];
+				$domain_array_temp = explode( "/", $http_referer);
+				$this->session->url_logout = $domain_array_temp[0] . "//" . $domain_array_temp[2];
+				$this->printResponse('success', 'login success', 'login success');
+			}
+		//} else if ($user->isNoUserInDatabase()) {
+		} else if ($user->isBlocked($post['user'])) {
+			$agent_client = 'kami';
+			$userLog->add($user_id, $post['user'] . ' Block user try login.');
+			$this->printResponse('failed', 'Login ID anda terblokir, harap hubungi customer service ' . $agent_client . ' segera !!!', array('flag' => 'alert', 'alert' => 'Login ID anda terblokir, harap hubungi customer service'));
+		} else if (!$user_id) {
+			$userLog->add(NULL, $post['user'].' try login.');
+			$this->printResponse('failed', 'Username atau Password Anda salah !!!', array('flag' => 'alert', 'alert' => 'Username atau Password Anda salah !!!'));
+		} else {
+			if (!empty($user_id)) {
+				$userLog->add($user_id, 'Try Log in wrong password');
+				$user->incPasswordAttempt($user_id);
+			} else {
+				$userLog->add(NULL, 'Unknown user try login.');
+			}
+			$this->printResponse('failed', 'Username or Password not match', array('flag' => 'alert', 'alert' => 'username atau password salah'));
+		}
+	}
+	
+	public function noaccessAction()
+	{
+		$this->printResponse('failed', 'SESSION TIMEOUT', array('flag'=>'alert', 'alert'=>'sesi habis'));
+	}
+	
+	public function nopopupAction()
+	{
+		$this->printResponse('failed', 'SESSION TIMEOUT', array('flag'=>'alert', 'alert'=>'sesi habis'));
+	}
+	
+	public function noactionAction()
+	{
+		$this->printResponse('failed', 'THIS PAGE UNDER CONSTRUCTION !!!', array('flag'=>'alert', 'alert'=>'halaman sedang dibuat'));
+	}
+	
+	public function logoutAction()
+	{
+		$user = new User();
+		$userLog = new userLog();
+		if (!empty($this->session->user_id)) {
+			$user->updateLifeTime($this->session->user_id, time());
+			$userLog->add($this->session->user_id, 'Log out');
+		}
+		$this->destroyRole();
+		echo 'anda sudah logout ganteng'; exit();
+	}
+	
+	public function isonloginAction()
+	{
+		$user = new User();
+		$response['status'] = 'failed';
+		$response['message'] = 'Gagal Login';
+		$response['content'] = array('info' => NULL, 'url_login' => URL_LOGIN, 'url_logout' => $this->session->url_logout);
+		
+		if($this->session->user_name) {
+			$response['status'] = 'success';
+			$response['message'] = 'Berhasil login';
+			$response['content'] = array('info' => 'Berhasil', 'url_login' => URL_LOGIN, 'url_logout' => $this->session->url_logout);
+		}
+		echo json_encode($response);
+		exit();
+	}
+	
 	public function getmenuAction()
 	{
 		$access_menu = $this->getAccessMenu($this->menu);
@@ -243,18 +208,14 @@ class AdminController extends ParentController
 		exit();
 	}
 	
-	function getuserloginAction()
+	public function getuserloginAction()
 	{
 		$user = new User();
-		$email = $user->getEmail($this->session->user_id);
-		$phone_list = $user->getPhone($this->session->user_id);
 		$content['data']['user']['user_real_name'] = $this->session->user_trading;
-		$content['data']['user']['user_email'] = $email;
-		$content['data']['user']['phone_list'] = $phone_list;
-		$content['data']['user']['user_deposit'] = $user->getDeposit($this->session->user_id);
-		$is_su = $this->isInRole('SUPER_USER') ? 1 : 0;
-		$is_su = $this->isInRole('SUPER_USER') ? 84 : 70;
-		$content['data']['user']['8385'] = $is_su;
+		$content['data']['user']['user_email'] = NULL;
+		$content['data']['user']['phone_list'] = NULL;
+		$content['data']['user']['user_deposit'] = 0;
+		$content['data']['user']['8385'] = true;
 		$content['data']['user']['9080'] = $this->getzopimAction();
 		$content['data']['user']['8066'] = $this->getpbAction();
 		$content['data']['user']['8478'] = TRAVEL_NAME ? (int) TRAVEL_NAME : 1;
@@ -271,7 +232,7 @@ class AdminController extends ParentController
 		exit();
 	}
 	
-	function getinfoAction()
+	public function getinfoAction()
 	{
 		$content['data']['user']['8066'] = $this->getpbAction();
 		$content['data']['user']['8478'] = TRAVEL_NAME ? (int) TRAVEL_NAME : 1;
@@ -283,22 +244,22 @@ class AdminController extends ParentController
 		exit();
 	}
 	
-	function getpbAction()
+	public function getpbAction()
 	{
 		return 70;
 	}
 	
-	function getzopimAction()
+	public function getzopimAction()
 	{
 		return 84;
 	}
 	
-	function isUnlimitedDownline()
+	public function isUnlimitedDownline()
 	{
 		return 70;
 	}
 	
-	function iscanchangeupline()
+	public function iscanchangeupline()
 	{
 		return 70;
 	}
