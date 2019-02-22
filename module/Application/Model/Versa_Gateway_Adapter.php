@@ -15,7 +15,7 @@ class Versa_Gateway_Adapter
 	public function init($table)
 	{
 		$adapter = new Adapter([
-			'host'		=> 'localhost',
+			'hostname'		=> '192.168.3.162', // or localhost
 			'driver'	=> 'sqlsrv',
 			//'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
 			'database'	=> 'demo',
@@ -29,7 +29,7 @@ class Versa_Gateway_Adapter
 	public function paginator($select, $page = 1, $max_page = 10)
 	{
 		$adapter = new Adapter([
-			'host'		=> 'localhost',
+			'hostname'		=> '192.168.3.162', // or localhost
 			'driver'	=> 'sqlsrv',
 			//'dsn'		=> sprintf('sqlite:%s/data/zftutorial.db', realpath(getcwd())),
 			'database'	=> 'demo',
