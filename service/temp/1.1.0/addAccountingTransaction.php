@@ -1,3 +1,50 @@
+create table tblProfile (
+   profile_code      varchar(50)           null,
+   constraint PK_TBLPROFILE primary key nonclustered (profile_code)
+)
+go
+
+create table tblGroup (
+   group_id          int                   identity,
+   group_name        varchar(50)           null,
+   group_created     int                   null,
+   group_access      text                  null,
+   group_code        varchar(5)            null,
+   group_status      varchar(1)            null,
+   constraint PK_TBLGROUP primary key nonclustered (group_id)
+)
+go
+
+create table tblUser (
+   user_id               int                   identity,
+   group_id              int                   null,
+   user_name             varchar(50)           null,
+   user_realname         varchar(50)           null,
+   password              varchar(50)           null,
+   password_attempt      int                   null,
+   user_login            int                   null,
+   user_created          int                   null,
+   user_create_by        int                   null,
+   user_last_order       int                   null,
+   user_master           int                   null,
+   user_lifetime         int                   null,
+   login_attempt         int                   null,
+   user_session          varchar(50)           null,
+   user_status           varchar(1)            null,
+   constraint PK_TBLUSER primary key nonclustered (user_id)
+)
+go
+
+create table tblUserLog (
+   userlog_id          int                   identity,
+   user_id             int                   null,
+   userlog_date        int                   null,
+   userlog_action      varchar(160)          null,
+   userlog_ip_address  varchar(50)           null,
+   constraint PK_TBLUSERLOG primary key nonclustered (userlog_id)
+)
+go
+
 create table tblPeriod (
    period_begin          varchar(6)           identity,
    period_status         varchar(1)           null,
